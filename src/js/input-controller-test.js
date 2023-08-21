@@ -1,3 +1,13 @@
+/**
+ * @param {string} groupName 
+ * @param {() => any} callback 
+ */
+const consoleGroup = (groupName, callback) => {
+    console.group(groupName);
+    callback();
+    console.groupEnd();
+}
+
 const controller = new InputController({
     left: {
         keys: [],
@@ -5,16 +15,24 @@ const controller = new InputController({
     }
 });
 
-console.log(controller.actions);
+consoleGroup('Проверка метода bindActions', () => {
+    console.log(controller.actions);
 
-controller.bindActions({
-    right: {
-        keys: [],
-        enabled: false
-    }
+    controller.bindActions({
+        right: {
+            keys: [],
+            enabled: false
+        }
+    });
+
+    console.log(controller.actions);
 });
 
-console.log(controller.actions);
+consoleGroup('Проверка метода isActionActive', () => {
+    console.log(`Action[bottom] активно: %c${controller.isActionActive('bottom')}`, 'color: blue;');
+    console.log(`Action[left] активно: %c${controller.isActionActive('left')}`, 'color: blue;');
+    console.log(`Action[right] активно: %c${controller.isActionActive('right')}`, 'color: blue;');
+});
 
 // controller.onInput('KeyW', () => {
 //     const arrow = document.querySelector('img#arrowMain');
