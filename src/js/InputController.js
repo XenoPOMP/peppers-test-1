@@ -53,6 +53,22 @@ class InputController {
     }
 
     /**
+     * Этот метод включает событие если:
+     * 
+     * 1. Оно существует
+     * 2. Оно выключено
+     * 
+     * @param {string} actionName     название события, которое нужно выключить.
+     */
+    enableAction(actionName) {
+        if (this.isActionActive(actionName) || !this.isActionExist(actionName)) {
+            return;
+        }
+
+        this.actions[actionName].enabled = true;
+    }
+
+    /**
      * Данный метод проверяет, включено ли событие.
      * 
      * @param {string} action           название события, которое нужно проверить.
@@ -60,12 +76,23 @@ class InputController {
      * @returns {boolean}
      */
     isActionActive(action) {
-        if (!(action in this.actions)) {
+        if (!this.isActionExist(action)) {
             console.warn(`Событие [${action}] не существует!`);
             return false;
         }
 
         return this.actions[action].enabled ?? false;
+    }
+
+    /**
+     * Данный метод проверяет, существует ли событие.
+     * 
+     * @param {string} action           название события, которое нужно проверить.
+     * 
+     * @returns {boolean}
+     */
+    isActionExist(action) {
+        return action in this.actions;
     }
 
     /**
