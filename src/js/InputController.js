@@ -123,7 +123,7 @@ class InputController {
      * события из переменной **actions**.
      * 
      * @param {HTMLElement|Document|null} target     цель, на которую вешается слушатель событий.
-     * @param {boolean} dontEnable              если передано **true** - не активирует контроллер.
+     * @param {boolean} dontEnable                   если передано **true** - не активирует контроллер.
      */
     attach(target, dontEnable) {
         if (dontEnable || target === null) {
