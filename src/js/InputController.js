@@ -15,13 +15,11 @@ class InputController {
     onInput(key, action) {
         /** Вешаем на документ обработчик событий keypress. */
         document.addEventListener('keypress', (ev) => {
-            // console.log(ev);
-
             /** 
              * Если кнопка из события совпадает с целевой,
              * выполняем колбэк.
              */
-            if (ev.key === key) {
+            if (ev.code === key) {
                 action();
             }
         });
