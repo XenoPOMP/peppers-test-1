@@ -35,16 +35,30 @@ inlineData();
 /** @type {Record<string, HTMLButtonElement|null>} */
 const devButtons = {
     attachButton: document.querySelector('button#attach-test-button'),
-    detachButton: document.querySelector('button#detach-test-button')
+    detachButton: document.querySelector('button#detach-test-button'),
+    activateButton: document.querySelector('button#activate-test-button'),
+    deactivateButton: document.querySelector('button#deactivate-test-button'),
 };
 
 devButtons.attachButton.onclick = () => {
     controller.attach(document.body);
+    inlineData();
 };
 
 devButtons.detachButton.onclick = () => {
     controller.detach();
+    inlineData();
 };
+
+devButtons.activateButton.onclick = () => {
+    controller.activate();
+    inlineData();
+}
+
+devButtons.deactivateButton.onclick = () => {
+    controller.deactivate();
+    inlineData();
+}
 
 // consoleGroup('Проверка метода bindActions', () => {
 //     console.log(controller.actions);
