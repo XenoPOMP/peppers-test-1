@@ -8,16 +8,52 @@ const consoleGroup = (groupName, callback) => {
     console.groupEnd();
 }
 
-/** Объект игрока. */
-const reqSquare = document.querySelector('#redSquare');
+/**
+ * Данная функция позволяет двигать красный квадрат с помощью забинженных
+ * кнопок.
+ * 
+ * @param {number} stepsByX    определяет количество шагов, на которые надо сходить по оси X.
+ * @param {number} stepsByY    определяет количество шагов, на которые надо сходить по оси Y.
+ */
+const moveSquare = (stepsByX, stepsByY) => {
+    /**
+     * Объект игрока. 
+     * 
+     * @type {HTMLDivElement}
+     */
+    const reqSquare = document.querySelector('#redSquare');
+    /** @type {number} */
+    const pixelsPerStep = 6;
+
+    const translate = reqSquare.style.translate === '0px' ? '0px 0px' : reqSquare.style.translate;
+    const x = parseInt(translate.split(/\s/gi)[0]) + pixelsPerStep * stepsByX;
+    const y = (isNaN(parseInt(translate.split(/\s/gi)[1])) ? 0 : parseInt(translate.split(/\s/gi)[1]))  + pixelsPerStep * stepsByY;
+
+    const newTranslateStr = `${x}px ${y}px`;
+
+    reqSquare.style.translate = newTranslateStr;
+}
 
 const controller = new InputController({
     left: {
-        keys: [97],
+        keys: [97,1092],
         enabled: true,
-        callback: () => {
-            
-        }
+        callback: () => moveSquare(-1, 0)
+    },
+    bottom: {
+        keys: [115,1099],
+        enabled: true,
+        callback: () => moveSquare(0, 1)
+    },
+    right: {
+        keys: [100,1074],
+        enabled: true,
+        callback: () => moveSquare(1, 0)
+    },
+    top: {
+        keys: [119,1094],
+        enabled: true,
+        callback: () => moveSquare(0, -1)
     }
 });
 
@@ -71,7 +107,19 @@ devButtons.bindJumpButton.onclick = () => {
     controller.bindActions({
         jump: {
             keys: [32],
-            enabled: true
+            enabled: true,
+            callback: () => {
+                /** @type {HTMLDivElement} */
+                const reqSquare = document.querySelector('#redSquare');
+
+                reqSquare.classList.add('jump');
+            },
+            afterEvent: () => {
+                /** @type {HTMLDivElement} */
+                const reqSquare = document.querySelector('#redSquare');
+
+                reqSquare.classList.remove('jump');
+            }
         }
     });
     inlineData();

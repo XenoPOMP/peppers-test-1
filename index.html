@@ -16,18 +16,30 @@
     <section>
         <h1 style="text-align: center;">Проверка работоспособности</h1>
 
-        <article id="info-preview">
-            <pre>
-                <p></p>
-            </pre>
-        </article>
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-bottom: 1rem;">
+            <article id="info-preview">
+                <pre>
+                    <p></p>
+                </pre>
+            </article>
+    
+            <article style="display: flex; flex-direction: column; gap: .15rem !important;">
+                <h2 style="text-align: center;">Управляй квадратом! (WASD)</h2>
+
+                <div class="squarePlaceholder">
+                    <div id="redSquare" style="translate: 0px 0px;"></div>
+                </div>
+            </article>
+        </div>
 
         <article>
-            <button id="attach-test-button">Аттач на элемент {document.body}</button>
-            <button id="detach-test-button">Детач элемента {document.body}</button>
+            <button id="attach-test-button">Аттач на элемент {document}</button>
+            <button id="detach-test-button">Детач элемента {document}</button>
 
             <button id="activate-test-button">Активировать контроллер</button>
             <button id="deactivate-test-button">Деактивировать контроллер</button>
+
+            <button id="bind-jump-test-button">Забиндить прыжок</button>
         </article>
     </section>
 </body>
