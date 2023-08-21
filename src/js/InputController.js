@@ -69,6 +69,22 @@ class InputController {
     }
 
     /**
+     * Этот метод выключает событие если:
+     * 
+     * 1. Оно существует
+     * 2. Оно включено
+     * 
+     * @param {string} actionName     название события, которое нужно выключить.
+     */
+    disableAction(actionName) {
+        if (!this.isActionActive(actionName) || !this.isActionExist(actionName)) {
+            return;
+        }
+
+        this.actions[actionName].enabled = false;
+    }
+
+    /**
      * Данный метод проверяет, включено ли событие.
      * 
      * @param {string} action           название события, которое нужно проверить.
@@ -118,7 +134,7 @@ class InputController {
     // TODO =============
     // bindActions      +
     // enableAction     +
-    // disableAction    
+    // disableAction    +
     // attach           
     // detach           
     // isActionActive   +

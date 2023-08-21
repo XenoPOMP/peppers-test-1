@@ -41,6 +41,16 @@ consoleGroup('Проверка метода enableAction', () => {
     console.log(`Action[right] активно: %c${controller.isActionActive('right')}`, 'color: blue;');
 });
 
+consoleGroup('Проверка метода disableAction', () => {
+    controller.disableAction('topLeft');
+    controller.disableAction('left');
+
+    console.log(`Action[left] активно: %c${controller.isActionActive('left')}`, 'color: blue;');
+
+    controller.enableAction('right');
+    controller.enableAction('left');
+});
+
 // controller.onInput('KeyW', () => {
 //     const arrow = document.querySelector('img#arrowMain');
 
