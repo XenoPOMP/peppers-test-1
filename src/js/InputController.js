@@ -202,7 +202,7 @@ class InputController {
     // enableAction     +
     // disableAction    +
     // attach           +
-    // detach           
+    // detach           +
     // isActionActive   +
     // isKeyPressed     +
 }
