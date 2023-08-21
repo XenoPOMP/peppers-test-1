@@ -115,7 +115,7 @@ class InputController {
         });
     }
 
-    // TODO
+    // TODO =============
     // bindActions      +
     // enableAction     +
     // disableAction    
