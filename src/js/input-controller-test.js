@@ -8,10 +8,16 @@ const consoleGroup = (groupName, callback) => {
     console.groupEnd();
 }
 
+/** Объект игрока. */
+const reqSquare = document.querySelector('#redSquare');
+
 const controller = new InputController({
     left: {
         keys: [97],
-        enabled: true
+        enabled: true,
+        callback: () => {
+            
+        }
     }
 });
 
@@ -38,10 +44,11 @@ const devButtons = {
     detachButton: document.querySelector('button#detach-test-button'),
     activateButton: document.querySelector('button#activate-test-button'),
     deactivateButton: document.querySelector('button#deactivate-test-button'),
+    bindJumpButton: document.querySelector('button#bind-jump-test-button'),
 };
 
 devButtons.attachButton.onclick = () => {
-    controller.attach(document.body);
+    controller.attach(document);
     inlineData();
 };
 
@@ -60,47 +67,12 @@ devButtons.deactivateButton.onclick = () => {
     inlineData();
 }
 
-// consoleGroup('Проверка метода bindActions', () => {
-//     console.log(controller.actions);
-
-//     controller.bindActions({
-//         right: {
-//             keys: [100],
-//             enabled: false
-//         }
-//     });
-
-//     console.log(controller.actions);
-// });
-
-// consoleGroup('Проверка метода isActionActive', () => {
-//     console.log(`Action[bottom] активно: %c${controller.isActionActive('bottom')}`, 'color: blue;');
-//     console.log(`Action[left] активно: %c${controller.isActionActive('left')}`, 'color: blue;');
-//     console.log(`Action[right] активно: %c${controller.isActionActive('right')}`, 'color: blue;');
-// });
-
-// consoleGroup('Проверка метода enableAction', () => {
-//     controller.enableAction('topLeft');
-//     controller.enableAction('right');
-
-//     console.log(`Action[right] активно: %c${controller.isActionActive('right')}`, 'color: blue;');
-// });
-
-// consoleGroup('Проверка метода disableAction', () => {
-//     controller.disableAction('topLeft');
-//     controller.disableAction('left');
-
-//     console.log(`Action[left] активно: %c${controller.isActionActive('left')}`, 'color: blue;');
-
-//     controller.enableAction('right');
-//     controller.enableAction('left');
-// });
-
-// consoleGroup('Проверка метода attach', () => {
-//     controller.attach(document);
-// });
-
-// consoleGroup('Проверка метода detach', () => {
-//     controller.detach();
-//     // controller.attach(document);
-// });
+devButtons.bindJumpButton.onclick = () => {
+    controller.bindActions({
+        jump: {
+            keys: [32],
+            enabled: true
+        }
+    });
+    inlineData();
+}
