@@ -1,15 +1,22 @@
-img.arrowMain {
-    transition: transform .15s ease;
+body {
+    height: 100vh; 
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    flex-direction: column;
+    gap: 1rem;
+    font-size: 1rem;
 }
 
-img.arrowMain.left {
-    transform: rotate(-.25turn);
+body section article {
+    display: flex;
+    gap: .5rem;
+    flex-wrap: wrap;
+    justify-content: center;
 }
 
-img.arrowMain.bottom {
-    transform: rotate(-.5turn);
-}
-
-img.arrowMain.right {
-    transform: rotate(-.75turn);
+body section article button {
+    font-size: 1rem;
+    cursor: pointer;
+    user-select: none;
 }

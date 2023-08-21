@@ -7,32 +7,27 @@
 
     <!-- Скрипты -->
     <script src="./src/js/InputController.js"></script>
+    <script src="./src/js/input-controller-test.js" defer></script>
 
     <!-- Стили -->
     <link rel="stylesheet" href="./src/css/main.css">
 </head>
-<body 
-    style="
-    height: 100vh; 
-    display: flex; 
-    justify-content: center; 
-    align-items: center; 
-    flex-direction: column;
-    gap: 1rem;
-    "
->
-    
-    <img 
-        src="./src/media/reshot-icon-arrow-up-ZGEKU95YAJ.svg" 
-        style="width: 2rem;" 
-        class="arrowMain" 
-        id="arrowMain"
-    />
+<body>
+    <section>
+        <h1>Проверка работоспособности</h1>
 
-    <h1>Хожу туда</h1>
+        <article id="info-preview">
+            <pre>
+                <p></p>
+            </pre>
+        </article>
 
-    <button id="stopListening">Перестать слушать события</button>
+        <article>
+            <button id="attach-test-button">Аттач на элемент {document.body}</button>
+            <button id="detach-test-button">Детач элемента {document.body}</button>
 
-    <script src="./src/js/input-controller-test.js"></script>
+            <button id="activate-test-button">Активировать контроллер</button>
+        </article>
+    </section>
 </body>
 </html>
