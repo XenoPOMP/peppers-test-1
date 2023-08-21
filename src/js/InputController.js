@@ -22,6 +22,9 @@ class InputController {
     /** @type {number | undefined} */
     _CURRENT_PRESSED_KEY = undefined;
 
+    /** @type {AbortController} */
+    _ABORT_CONTROLLER = new AbortController();
+
     /**
      * @param {Record<string, { keys: number[], enabled?: boolean }>} actionsToBind         события, которые нужно забиндить.
      * @param {HTMLElement|Document} [target]                                               цель, на которую будут свешиваться слушатели событий
@@ -135,18 +138,20 @@ class InputController {
         }
 
         this.target = target;
-        this.target.addEventListener('keypress', () => this.onEvent());
+        this.target.addEventListener('keypress', () => this.onEvent(), {
+            signal: this._ABORT_CONTROLLER.signal
+        });
     }
 
     /**
      * Этот метод снимает слушатель событий с цели.
      */
     detach() {
-        console.log('Detaching target.');
-        console.log(this.target);
+        // this._ABORT_CONTROLLER.abort();
 
-        this.target.removeEventListener('keypress', () => this.onEvent());
-        this.target = null;
+        this.target.removeEventListener('keypress', () => this.onEvent(), {
+            signal: this._ABORT_CONTROLLER.signal
+        });
     }
 
     /**
