@@ -1,0 +1,30 @@
+{
+  "parser": "babel",
+  "tabWidth": 2,
+  "singleQuote": true,
+  "jsxSingleQuote": true,
+  "semi": true,
+  "useTabs": false,
+  "arrowParens": "avoid",
+  "importOrder": [
+    "<THIRD_PARTY_MODULES>",
+    "^@components/(.*)$",
+    "^@api/(.*)$",
+    "^@contexts/(.*)$",
+    "^@pages/(.*)$",
+    "^@redux/(.*)$",
+    "^@styles/(.*)$",
+    "^@providers/(.*)$",
+    "^@ui/(.*)$",
+    "^@hooks/(.*)$",
+    "^@type/(.*)$",
+    "^@utils/(.*)$",
+    "^@media/(.*)$",
+    "^@services/(.*)$",
+    "^@errors/(.*)$",
+    "^../(.*)$",
+    "^./(.*)$"
+  ],
+  "importOrderSeparation": true,
+  "importOrderSortSpecifiers": true
+}
