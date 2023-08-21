@@ -24,8 +24,8 @@ class InputController {
 
     /**
      * @param {Record<string, { keys: number[], enabled?: boolean }>} actionsToBind         события, которые нужно забиндить.
-     * @param {HTMLElement|Document} [target]                                                        цель, на которую будут свешиваться слушатели событий
-     *                                                                                      (**document**) по умолчанию.
+     * @param {HTMLElement|Document} [target]                                               цель, на которую будут свешиваться слушатели событий
+     *                                                                                      (**null**) по умолчанию.
      */
     constructor(actionsToBind, target) {
         /** 
@@ -41,6 +41,7 @@ class InputController {
             this.bindActions(actionsToBind);
         }
 
+        /** Отслеживаем любые нажатия, запоминаем код кнопки. */
         document.addEventListener('keypress', (ev) => {
             const { keyCode } = ev;
 
