@@ -16,8 +16,8 @@ class InputController {
     /** @type {Record<string, { keys: number[], enabled?: boolean }>} */
     actions = {};
 
-    /** @type {HTMLElement|Document} */
-    target = document;
+    /** @type {number | undefined} */
+    _CURRENT_PRESSED_KEY = undefined;
 
     /**
      * @param {Record<string, { keys: number[], enabled?: boolean }>} actionsToBind         события, которые нужно забиндить.
@@ -37,6 +37,12 @@ class InputController {
         if (actionsToBind !== undefined) {
             this.bindActions(actionsToBind);
         }
+
+        document.addEventListener('keypress', (ev) => {
+            const { keyCode } = ev;
+
+            this._CURRENT_PRESSED_KEY = keyCode;
+        });
     }
 
     /**
@@ -109,6 +115,39 @@ class InputController {
      */
     isActionExist(action) {
         return action in this.actions;
+    }
+
+
+    /**
+     * Этот метод вешает на цель слушатель событий, который обрабатывает
+     * события из переменной **actions**.
+     * 
+     * @param {HTMLElement|Document|null} target     цель, на которую вешается слушатель событий.
+     * @param {boolean} dontEnable              если передано **true** - не активирует контроллер.
+     */
+    attach(target, dontEnable) {
+        if (dontEnable || target === null) {
+            return;
+        }
+
+        target.addEventListener('keypress', () => {
+            console.log(`Нажата кнопка с кодом 97 (A): %c${this.isKeyPressed(97)}`, 'color: blue;');
+        });
+    }
+
+    /**
+     * Этот метод проверяет, нажата ли нужная кнопка.
+     * 
+     * @param {number} keyCode     проверяемый код кнопки.
+     * 
+     * @returns {boolean}
+     */
+    isKeyPressed(keyCode) {
+        if (this._CURRENT_PRESSED_KEY === undefined) {
+            return false;
+        }
+
+        return this._CURRENT_PRESSED_KEY === keyCode;
     }
 
     /**
