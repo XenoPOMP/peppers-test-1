@@ -20,8 +20,9 @@ class InputController {
     target = document;
 
     /**
-     * @param {Record<string, { keys: number[], enabled?: boolean }>} actionsToBind 
-     * @param {HTMLElement} [target] 
+     * @param {Record<string, { keys: number[], enabled?: boolean }>} actionsToBind         события, которые нужно забиндить.
+     * @param {HTMLElement} [target]                                                        цель, на которую будут свешиваться слушатели событий
+     *                                                                                      (**document**) по умолчанию.
      */
     constructor(actionsToBind, target) {
         /** 
@@ -41,7 +42,7 @@ class InputController {
     /**
      * Этот метод занимается биндингом событий.
      * 
-     * @param {Record<string, { keys: number[], enabled?: boolean }>} actionsToBind 
+     * @param {Record<string, { keys: number[], enabled?: boolean }>} actionsToBind        события, которые нужно забиндить.
      */
     bindActions(actionsToBind) {
         /** 
@@ -49,6 +50,22 @@ class InputController {
          * в переменную actions.
          */
         this.actions = { ...this.actions, ...actionsToBind };
+    }
+
+    /**
+     * Данный метод проверяет, включено ли событие.
+     * 
+     * @param {string} action           название события, которое нужно проверить.
+     * 
+     * @returns {boolean}
+     */
+    isActionActive(action) {
+        if (!(action in this.actions)) {
+            console.warn(`Событие [${action}] не существует!`);
+            return false;
+        }
+
+        return this.actions[action].enabled ?? false;
     }
 
     /**
@@ -70,4 +87,13 @@ class InputController {
             }
         });
     }
+
+    // TODO
+    // bindActions      +
+    // enableAction     
+    // disableAction    
+    // attach           
+    // detach           
+    // isActionActive   +
+    // isKeyPressed     
 }
