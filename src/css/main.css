@@ -8,6 +8,7 @@ body {
     font-size: 1rem;
     padding: 1rem;
     overflow: hidden;
+    font-variant-numeric: tabular-nums;
 }
 
 body section article {
