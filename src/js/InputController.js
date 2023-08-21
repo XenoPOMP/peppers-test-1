@@ -52,6 +52,16 @@ class InputController {
         });
     }
 
+    /** Этот метод позволяет включать контроллер. */
+    activate() {
+        this.enabled = true;
+    }
+
+    /** Этот метод позволяет выключать контроллер. */
+    deactivate() {
+        this.enabled = false;
+    }
+
     /**
      * Этот метод занимается биндингом событий.
      * 
@@ -133,7 +143,9 @@ class InputController {
      * @param {boolean} dontEnable                   если передано **true** - не активирует контроллер.
      */
     attach(target, dontEnable) {
+        /** Проверяем, что цель задана и агрумент dontEnable === true */
         if (dontEnable || target === null) {
+            this.enabled = dontEnable ?? false;
             return;
         }
 
@@ -181,11 +193,18 @@ class InputController {
      * инпуте.
      */
     onEvent() {
+        /** Если контроллер отключен, то ничего не делаем. */
+        if (!this.enabled) {
+            return;
+        } 
+
         /** Пробегаемся циклом по всем экшенам, проверяем нажатие нужной кнопки. */
         Object.keys(this.actions).forEach(actionName => {
             const { keys, enabled } = this.actions[actionName];
 
-            /** Если событие включено, то выполняем некий колбэк. */
+            /** 
+             * Если событие включено, то выполняем некий колбэк.
+             */
             if (enabled ?? false) {
                 keys.forEach(key => {
                     if (this.isKeyPressed(key)) {
