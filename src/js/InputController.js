@@ -154,7 +154,7 @@ class InputController {
      */
     onEvent() {
         /** Пробегаемся циклом по всем экшенам, проверяем нажатие нужной кнопки. */
-        Object.keys(this.actions)?.forEach(actionName => {
+        Object.keys(this.actions).forEach(actionName => {
             const { keys, enabled } = this.actions[actionName];
 
             /** Если событие включено, то выполняем некий колбэк. */
@@ -173,7 +173,7 @@ class InputController {
     // bindActions      +
     // enableAction     +
     // disableAction    +
-    // attach           
+    // attach           +
     // detach           
     // isActionActive   +
     // isKeyPressed     +
