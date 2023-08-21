@@ -1,0 +1,15 @@
+{
+  "name": "test-project-1",
+  "version": "1.0.0",
+  "description": "Тестовое задание Наумова Александра в компанию Перцы",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/XenoPOMP/peppers-test-1"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "XenoPOMP",
+  "license": "ISC"
+}
