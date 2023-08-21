@@ -20,7 +20,7 @@ consoleGroup('Проверка метода bindActions', () => {
 
     controller.bindActions({
         right: {
-            keys: [],
+            keys: [97],
             enabled: false
         }
     });

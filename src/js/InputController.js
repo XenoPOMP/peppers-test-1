@@ -130,9 +130,7 @@ class InputController {
             return;
         }
 
-        target.addEventListener('keypress', () => {
-            console.log(`Нажата кнопка с кодом 97 (A): %c${this.isKeyPressed(97)}`, 'color: blue;');
-        });
+        target.addEventListener('keypress', (ev) => this.onEvent());
     }
 
     /**
@@ -153,19 +151,20 @@ class InputController {
     /**
      * Метод, обрабатывающий событие, возникающее при
      * инпуте.
-     * 
-     * @param {string} key       код нажатой кнопки.    
-     * @param {() => any} action            колбэк, вызываемый в момент нажатия. 
      */
-    onInput(key, action) {
-        /** Вешаем на цель обработчик событий keypress. */
-        this.target.addEventListener('keypress', (ev) => {
-            /** 
-             * Если кнопка из события совпадает с целевой,
-             * выполняем колбэк.
-             */
-            if (ev.code === key) {
-                action();
+    onEvent() {
+        /** Пробегаемся циклом по всем экшенам, проверяем нажатие нужной кнопки. */
+        Object.keys(this.actions)?.forEach(actionName => {
+            const { keys, enabled } = this.actions[actionName];
+
+            /** Если событие включено, то выполняем некий колбэк. */
+            if (enabled ?? false) {
+                keys.forEach(key => {
+                    if (this.isKeyPressed(key)) {
+                        /** Сюда нужно вставить */
+                        console.log(`Вызвано событие {${actionName}} посредством нажатия на кнопку [${key}]`);
+                    }
+                })
             }
         });
     }
@@ -177,5 +176,5 @@ class InputController {
     // attach           
     // detach           
     // isActionActive   +
-    // isKeyPressed     
+    // isKeyPressed     +
 }
