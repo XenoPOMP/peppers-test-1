@@ -1,126 +1,131 @@
 /**
- * @param {string} groupName 
- * @param {() => any} callback 
+ * @param {string} groupName
+ * @param {() => any} callback
  */
 const consoleGroup = (groupName, callback) => {
-    console.group(groupName);
-    callback();
-    console.groupEnd();
-}
+  console.group(groupName);
+  callback();
+  console.groupEnd();
+};
 
 /**
  * Данная функция позволяет двигать красный квадрат с помощью забинженных
  * кнопок.
- * 
+ *
  * @param {number} stepsByX    определяет количество шагов, на которые надо сходить по оси X.
  * @param {number} stepsByY    определяет количество шагов, на которые надо сходить по оси Y.
  */
 const moveSquare = (stepsByX, stepsByY) => {
-    /**
-     * Объект игрока. 
-     * 
-     * @type {HTMLDivElement}
-     */
-    const reqSquare = document.querySelector('#redSquare');
-    /** @type {number} */
-    const pixelsPerStep = 6;
+  /**
+   * Объект игрока.
+   *
+   * @type {HTMLDivElement}
+   */
+  const reqSquare = document.querySelector('#redSquare');
+  /** @type {number} */
+  const pixelsPerStep = 6;
 
-    const translate = reqSquare.style.translate === '0px' ? '0px 0px' : reqSquare.style.translate;
-    const x = parseInt(translate.split(/\s/gi)[0]) + pixelsPerStep * stepsByX;
-    const y = (isNaN(parseInt(translate.split(/\s/gi)[1])) ? 0 : parseInt(translate.split(/\s/gi)[1]))  + pixelsPerStep * stepsByY;
+  const translate =
+    reqSquare.style.translate === '0px' ? '0px 0px' : reqSquare.style.translate;
+  const x = parseInt(translate.split(/\s/gi)[0]) + pixelsPerStep * stepsByX;
+  const y =
+    (isNaN(parseInt(translate.split(/\s/gi)[1]))
+      ? 0
+      : parseInt(translate.split(/\s/gi)[1])) +
+    pixelsPerStep * stepsByY;
 
-    const newTranslateStr = `${x}px ${y}px`;
+  const newTranslateStr = `${x}px ${y}px`;
 
-    reqSquare.style.translate = newTranslateStr;
-}
+  reqSquare.style.translate = newTranslateStr;
+};
 
 const controller = new InputController({
-    left: {
-        keys: [97,1092],
-        enabled: true,
-        callback: () => moveSquare(-1, 0)
-    },
-    bottom: {
-        keys: [115,1099],
-        enabled: true,
-        callback: () => moveSquare(0, 1)
-    },
-    right: {
-        keys: [100,1074],
-        enabled: true,
-        callback: () => moveSquare(1, 0)
-    },
-    top: {
-        keys: [119,1094],
-        enabled: true,
-        callback: () => moveSquare(0, -1)
-    }
+  left: {
+    keys: [97, 1092],
+    enabled: true,
+    callback: () => moveSquare(-1, 0),
+  },
+  bottom: {
+    keys: [115, 1099],
+    enabled: true,
+    callback: () => moveSquare(0, 1),
+  },
+  right: {
+    keys: [100, 1074],
+    enabled: true,
+    callback: () => moveSquare(1, 0),
+  },
+  top: {
+    keys: [119, 1094],
+    enabled: true,
+    callback: () => moveSquare(0, -1),
+  },
 });
 
 controller.attach(document, true);
 
 /** Выводим данные. */
 const inlineData = () => {
-    /** @type {string} */
-    const textToInsert = [
-        `Контроллер включен: ${controller.enabled}`,
-        '',
-        'Actions:', 
-        JSON.stringify(controller.actions, null, 2)
-    ].join('\n');
+  /** @type {string} */
+  const textToInsert = [
+    `Контроллер включен: ${controller.enabled}`,
+    '',
+    'Actions:',
+    JSON.stringify(controller.actions, null, 2),
+  ].join('\n');
 
-    document.querySelector('#info-preview p').innerText = textToInsert;
-}
+  document.querySelector('#info-preview p').innerText = textToInsert;
+};
 
 inlineData();
 
 /** @type {Record<string, HTMLButtonElement|null>} */
 const devButtons = {
-    attachButton: document.querySelector('button#attach-test-button'),
-    detachButton: document.querySelector('button#detach-test-button'),
-    activateButton: document.querySelector('button#activate-test-button'),
-    deactivateButton: document.querySelector('button#deactivate-test-button'),
-    bindJumpButton: document.querySelector('button#bind-jump-test-button'),
+  attachButton: document.querySelector('button#attach-test-button'),
+  detachButton: document.querySelector('button#detach-test-button'),
+  activateButton: document.querySelector('button#activate-test-button'),
+  deactivateButton: document.querySelector('button#deactivate-test-button'),
+  bindJumpButton: document.querySelector('button#bind-jump-test-button'),
 };
 
 devButtons.attachButton.onclick = () => {
-    controller.attach(document);
-    inlineData();
+  controller.attach(document);
+  inlineData();
 };
 
 devButtons.detachButton.onclick = () => {
-    controller.detach();
-    inlineData();
+  controller.detach();
+  inlineData();
 };
 
 devButtons.activateButton.onclick = () => {
-    controller.activate();
-    inlineData();
-}
+  controller.activate();
+  inlineData();
+};
 
 devButtons.deactivateButton.onclick = () => {
-    controller.deactivate();
-    inlineData();
-}
+  controller.deactivate();
+  inlineData();
+};
 
 devButtons.bindJumpButton.onclick = () => {
-    controller.bindActions({
-        jump: {
-            keys: [32],
-            enabled: true,
-            callback: () => {
-                /** @type {HTMLDivElement} */
-                const reqSquare = document.querySelector('#redSquare');
+  controller.bindActions({
+    jump: {
+      keys: [32],
+      enabled: true,
+      callback: () => {
+        /** @type {HTMLDivElement} */
+        const reqSquare = document.querySelector('#redSquare');
 
-                reqSquare.classList.add('jump');
-            },
-            afterEvent: () => {
-                /** @type {HTMLDivElement} */
-                const reqSquare = document.querySelector('#redSquare');
+        reqSquare.classList.add('jump');
+      },
+      afterEvent: () => {
+        /** @type {HTMLDivElement} */
+        const reqSquare = document.querySelector('#redSquare');
 
-                reqSquare.classList.remove('jump');
-            }
-        }
-    });
-    inlineData();
-}
+        reqSquare.classList.remove('jump');
+      },
+    },
+  });
+  inlineData();
+};
