@@ -7,32 +7,40 @@
 
     <!-- Скрипты -->
     <script src="./src/js/InputController.js"></script>
+    <script src="./src/js/input-controller-test.js" defer></script>
 
     <!-- Стили -->
     <link rel="stylesheet" href="./src/css/main.css">
 </head>
-<body 
-    style="
-    height: 100vh; 
-    display: flex; 
-    justify-content: center; 
-    align-items: center; 
-    flex-direction: column;
-    gap: 1rem;
-    "
->
+<body>
+    <section>
+        <h1 style="text-align: center;">Проверка работоспособности</h1>
+
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-bottom: 1rem;">
+            <article id="info-preview">
+                <pre>
+                    <p></p>
+                </pre>
+            </article>
     
-    <img 
-        src="./src/media/reshot-icon-arrow-up-ZGEKU95YAJ.svg" 
-        style="width: 2rem;" 
-        class="arrowMain" 
-        id="arrowMain"
-    />
+            <article style="display: flex; flex-direction: column; gap: .15rem !important;">
+                <h2 style="text-align: center;">Управляй квадратом! (WASD)</h2>
 
-    <h1>Хожу туда</h1>
+                <div class="squarePlaceholder">
+                    <div id="redSquare" style="translate: 0px 0px;"></div>
+                </div>
+            </article>
+        </div>
 
-    <button id="stopListening">Перестать слушать события</button>
+        <article>
+            <button id="attach-test-button">Аттач на элемент {document}</button>
+            <button id="detach-test-button">Детач элемента {document}</button>
 
-    <script src="./src/js/input-controller-test.js"></script>
+            <button id="activate-test-button">Активировать контроллер</button>
+            <button id="deactivate-test-button">Деактивировать контроллер</button>
+
+            <button id="bind-jump-test-button">Забиндить прыжок</button>
+        </article>
+    </section>
 </body>
 </html>
