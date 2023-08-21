@@ -137,7 +137,15 @@ class InputController {
             return;
         }
 
+        /** 
+         * Создаем новый AbortController каждый раз,
+         * когда происходит событие **attach**.
+         */
+        this._ABORT_CONTROLLER = new AbortController();
+
+        /** Записываем в переменную цели новую цель. */
         this.target = target;
+        /** Вешаем на новую цель слушатель событий. */
         this.target.addEventListener('keypress', () => this.onEvent(), {
             signal: this._ABORT_CONTROLLER.signal
         });
@@ -147,11 +155,10 @@ class InputController {
      * Этот метод снимает слушатель событий с цели.
      */
     detach() {
-        // this._ABORT_CONTROLLER.abort();
-
-        this.target.removeEventListener('keypress', () => this.onEvent(), {
-            signal: this._ABORT_CONTROLLER.signal
-        });
+        /** Посылаем сигнал **abort** в **ABORT_CONTROLLER**. */
+        this._ABORT_CONTROLLER.abort();
+        /** Сбрасываем цель. */
+        this.target = null;
     }
 
     /**

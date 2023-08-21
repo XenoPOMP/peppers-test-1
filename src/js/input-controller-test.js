@@ -60,6 +60,6 @@ consoleGroup('Проверка метода attach', () => {
 });
 
 consoleGroup('Проверка метода detach', () => {
-    // controller.detach();
+    controller.detach();
     // controller.attach(document);
 });
