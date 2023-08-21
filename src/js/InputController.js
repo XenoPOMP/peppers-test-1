@@ -13,7 +13,7 @@ class InputController {
     /** @type {string|undefined} */
     ACTION_DEACTIVATED = undefined;
 
-    /** @type {Record<string, { keys: number[], enabled?: boolean }>} */
+    /** @type {Record<string, { keys: number[], enabled?: boolean, callback?: () => any }>} */
     actions = {};
 
     /** @type {HTMLElement|Document|null} */
@@ -26,7 +26,7 @@ class InputController {
     _ABORT_CONTROLLER = new AbortController();
 
     /**
-     * @param {Record<string, { keys: number[], enabled?: boolean }>} actionsToBind         события, которые нужно забиндить.
+     * @param {Record<string, { keys: number[], enabled?: boolean, callback?: () => any }>} actionsToBind         события, которые нужно забиндить.
      * @param {HTMLElement|Document} [target]                                               цель, на которую будут свешиваться слушатели событий
      *                                                                                      (**null**) по умолчанию.
      */
@@ -65,7 +65,7 @@ class InputController {
     /**
      * Этот метод занимается биндингом событий.
      * 
-     * @param {Record<string, { keys: number[], enabled?: boolean }>} actionsToBind        события, которые нужно забиндить.
+     * @param {Record<string, { keys: number[], enabled?: boolean, callback?: () => any }>} actionsToBind        события, которые нужно забиндить.
      */
     bindActions(actionsToBind) {
         /** 
@@ -200,7 +200,7 @@ class InputController {
 
         /** Пробегаемся циклом по всем экшенам, проверяем нажатие нужной кнопки. */
         Object.keys(this.actions).forEach(actionName => {
-            const { keys, enabled } = this.actions[actionName];
+            const { keys, enabled, callback } = this.actions[actionName];
 
             /** 
              * Если событие включено, то выполняем некий колбэк.
@@ -208,8 +208,12 @@ class InputController {
             if (enabled ?? false) {
                 keys.forEach(key => {
                     if (this.isKeyPressed(key)) {
-                        /** Сюда нужно вставить */
+                        /** Сюда нужно вставить колбэк. */
                         console.log(`Вызвано событие {${actionName}} посредством нажатия на кнопку [${key}]`);
+
+                        if (callback !== undefined) {
+                            callback();
+                        }
                     }
                 })
             }
