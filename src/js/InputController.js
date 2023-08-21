@@ -117,7 +117,7 @@ class InputController {
 
     // TODO
     // bindActions      +
-    // enableAction     
+    // enableAction     +
     // disableAction    
     // attach           
     // detach           
