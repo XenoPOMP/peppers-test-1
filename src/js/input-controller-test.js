@@ -10,7 +10,7 @@ const consoleGroup = (groupName, callback) => {
 
 const controller = new InputController({
     left: {
-        keys: [],
+        keys: [97],
         enabled: true
     }
 });
@@ -20,7 +20,7 @@ consoleGroup('Проверка метода bindActions', () => {
 
     controller.bindActions({
         right: {
-            keys: [97],
+            keys: [100],
             enabled: false
         }
     });
