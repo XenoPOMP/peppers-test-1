@@ -1,0 +1,15 @@
+img.arrowMain {
+    transition: transform .15s ease;
+}
+
+img.arrowMain.left {
+    transform: rotate(-.25turn);
+}
+
+img.arrowMain.bottom {
+    transform: rotate(-.5turn);
+}
+
+img.arrowMain.right {
+    transform: rotate(-.75turn);
+}
