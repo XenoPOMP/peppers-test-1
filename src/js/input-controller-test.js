@@ -15,6 +15,10 @@ const controller = new InputController({
     }
 });
 
+const stopEventListening = () => {
+    controller.detach();
+}
+
 consoleGroup('Проверка метода bindActions', () => {
     console.log(controller.actions);
 
@@ -53,4 +57,8 @@ consoleGroup('Проверка метода disableAction', () => {
 
 consoleGroup('Проверка метода attach', () => {
     controller.attach(document);
+});
+
+consoleGroup('Проверка метода detach', () => {
+    controller.detach();
 });

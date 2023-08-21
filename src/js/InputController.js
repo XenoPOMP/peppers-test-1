@@ -16,12 +16,15 @@ class InputController {
     /** @type {Record<string, { keys: number[], enabled?: boolean }>} */
     actions = {};
 
+    /** @type {HTMLElement|Document|null} */
+    target = null;
+
     /** @type {number | undefined} */
     _CURRENT_PRESSED_KEY = undefined;
 
     /**
      * @param {Record<string, { keys: number[], enabled?: boolean }>} actionsToBind         события, которые нужно забиндить.
-     * @param {HTMLElement} [target]                                                        цель, на которую будут свешиваться слушатели событий
+     * @param {HTMLElement|Document} [target]                                                        цель, на которую будут свешиваться слушатели событий
      *                                                                                      (**document**) по умолчанию.
      */
     constructor(actionsToBind, target) {
@@ -122,7 +125,7 @@ class InputController {
      * Этот метод вешает на цель слушатель событий, который обрабатывает
      * события из переменной **actions**.
      * 
-     * @param {HTMLElement|Document|null} target     цель, на которую вешается слушатель событий.
+     * @param {HTMLElement|Document} target     цель, на которую вешается слушатель событий.
      * @param {boolean} dontEnable                   если передано **true** - не активирует контроллер.
      */
     attach(target, dontEnable) {
@@ -130,7 +133,19 @@ class InputController {
             return;
         }
 
-        target.addEventListener('keypress', (ev) => this.onEvent());
+        this.target = target;
+        this.target.addEventListener('keypress', () => this.onEvent());
+    }
+
+    /**
+     * Этот метод снимает слушатель событий с цели.
+     */
+    detach() {
+        console.log('Detaching target.');
+        console.log(this.target);
+
+        this.target.removeEventListener('keypress', () => this.onEvent());
+        this.target = null;
     }
 
     /**
