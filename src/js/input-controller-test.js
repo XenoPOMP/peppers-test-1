@@ -41,22 +41,22 @@ const moveSquare = (stepsByX, stepsByY) => {
 
 const controller = new InputController({
   left: {
-    keys: [97, 1092],
+    keys: [65, 1092],
     enabled: true,
     callback: () => moveSquare(-1, 0),
   },
   bottom: {
-    keys: [115, 1099],
+    keys: [83, 1099],
     enabled: true,
     callback: () => moveSquare(0, 1),
   },
   right: {
-    keys: [100, 1074],
+    keys: [68, 1074],
     enabled: true,
     callback: () => moveSquare(1, 0),
   },
   top: {
-    keys: [119, 1094],
+    keys: [87, 1094],
     enabled: true,
     callback: () => moveSquare(0, -1),
   },

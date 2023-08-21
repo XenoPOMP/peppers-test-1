@@ -19,8 +19,11 @@ class InputController {
   /** @type {HTMLElement|Document|null} */
   target = null;
 
-  /** @type {number | undefined} */
-  _CURRENT_PRESSED_KEY = undefined;
+  /** @type {number} */
+  _MAX_INPUTS_AT_THE_MOMENT_COUNT = 10;
+
+  /** @type {number[]} */
+  _CURRENT_PRESSED_KEYS_HEAP = [];
 
   /** @type {AbortController} */
   _ABORT_CONTROLLER = new AbortController();
@@ -45,10 +48,24 @@ class InputController {
     }
 
     /** Отслеживаем любые нажатия, запоминаем код кнопки. */
-    document.addEventListener('keypress', ev => {
+    document.addEventListener('keydown', ev => {
       const { keyCode } = ev;
 
-      this._CURRENT_PRESSED_KEY = keyCode;
+      if (keyCode !== this._CURRENT_PRESSED_KEYS_HEAP.at(0)) {
+        /** Добавляем нажатую кнопку в начало кучи. */
+        this._CURRENT_PRESSED_KEYS_HEAP.unshift(keyCode);
+      }
+
+      /** Если куча переполнена, то */
+      if (
+        this._CURRENT_PRESSED_KEYS_HEAP.length >
+        this._MAX_INPUTS_AT_THE_MOMENT_COUNT
+      ) {
+        this._CURRENT_PRESSED_KEYS_HEAP = this._CURRENT_PRESSED_KEYS_HEAP.slice(
+          0,
+          this._CURRENT_PRESSED_KEYS_HEAP.length - 1
+        );
+      }
     });
   }
 
@@ -157,12 +174,21 @@ class InputController {
     /** Записываем в переменную цели новую цель. */
     this.target = target;
     /** Вешаем на новую цель слушатель событий. */
-    this.target.addEventListener('keypress', () => this.onEvent(), {
+    this.target.addEventListener('keydown', () => this.onEvent(), {
       signal: this._ABORT_CONTROLLER.signal,
     });
-    this.target.addEventListener('keyup', () => this.afterEvent(), {
-      signal: this._ABORT_CONTROLLER.signal,
-    });
+    this.target.addEventListener(
+      'keyup',
+      () => {
+        this.afterEvent();
+
+        /** Очищаем очередь кнопок. */
+        this._CURRENT_PRESSED_KEYS_HEAP = [];
+      },
+      {
+        signal: this._ABORT_CONTROLLER.signal,
+      }
+    );
   }
 
   /**
@@ -183,11 +209,11 @@ class InputController {
    * @returns {boolean}
    */
   isKeyPressed(keyCode) {
-    if (this._CURRENT_PRESSED_KEY === undefined) {
+    if (this._CURRENT_PRESSED_KEYS_HEAP.length === 0) {
       return false;
     }
 
-    return this._CURRENT_PRESSED_KEY === keyCode;
+    return this._CURRENT_PRESSED_KEYS_HEAP.includes(keyCode);
   }
 
   /**
