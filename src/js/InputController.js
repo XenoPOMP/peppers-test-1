@@ -9,7 +9,7 @@ class InputController {
      * Метод, обрабатывающий событие, возникающее при
      * инпуте.
      * 
-     * @param {KeyboardEvent.key} key       код нажатой кнопки.    
+     * @param {string} key       код нажатой кнопки.    
      * @param {() => any} action            колбэк, вызываемый в момент нажатия. 
      */
     onInput(key, action) {
