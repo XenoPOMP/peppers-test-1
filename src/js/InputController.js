@@ -292,6 +292,6 @@ class InputController {
   }
 
   // TODO ==============================
-  // Fix isActionActive                -
+  // Fix isActionActive                +
   // Fix  Action name transfer to DOM  -
 }
