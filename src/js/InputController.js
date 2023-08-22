@@ -104,37 +104,42 @@ class InputController extends EventTarget {
   };
 
   /**
+   * @param {KeyboardEvent} event
+   */
+  onKeydown(event) {
+    const { keyCode } = event;
+
+    this._ACTIVE_STATE._active =
+      this.isAnyActionActive() && this.target !== null && this.enabled;
+
+    if (!this._ACTIVE_STATE._active) {
+      this.dispatchEvent(this.activate);
+    }
+
+    if (keyCode !== this._CURRENT_PRESSED_KEYS_HEAP.at(0)) {
+      /** Добавляем нажатую кнопку в начало кучи. */
+      this._CURRENT_PRESSED_KEYS_HEAP.unshift(keyCode);
+    }
+
+    /** Если куча переполнена, то */
+    if (
+      this._CURRENT_PRESSED_KEYS_HEAP.length >
+      this._MAX_INPUTS_AT_THE_MOMENT_COUNT
+    ) {
+      this._CURRENT_PRESSED_KEYS_HEAP = this._CURRENT_PRESSED_KEYS_HEAP.slice(
+        0,
+        this._CURRENT_PRESSED_KEYS_HEAP.length - 1
+      );
+    }
+  }
+
+  /**
    * В этой функции происходит  навешение глобальных слушателей событий
    * (keypress, keyup), которые отслеживают любые нажатия на любые кнопки.
    */
   bindCoreEvents() {
     /** Отслеживаем любые нажатия, запоминаем код кнопки. */
-    document.addEventListener('keydown', ev => {
-      const { keyCode } = ev;
-
-      this._ACTIVE_STATE._active =
-        this.isAnyActionActive() && this.target !== null && this.enabled;
-
-      if (!this._ACTIVE_STATE._active) {
-        this.dispatchEvent(this.activate);
-      }
-
-      if (keyCode !== this._CURRENT_PRESSED_KEYS_HEAP.at(0)) {
-        /** Добавляем нажатую кнопку в начало кучи. */
-        this._CURRENT_PRESSED_KEYS_HEAP.unshift(keyCode);
-      }
-
-      /** Если куча переполнена, то */
-      if (
-        this._CURRENT_PRESSED_KEYS_HEAP.length >
-        this._MAX_INPUTS_AT_THE_MOMENT_COUNT
-      ) {
-        this._CURRENT_PRESSED_KEYS_HEAP = this._CURRENT_PRESSED_KEYS_HEAP.slice(
-          0,
-          this._CURRENT_PRESSED_KEYS_HEAP.length - 1
-        );
-      }
-    });
+    document.addEventListener('keydown', this.onKeydown);
   }
 
   /**
