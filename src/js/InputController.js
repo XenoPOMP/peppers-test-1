@@ -281,12 +281,7 @@ class InputController {
     });
   }
 
-  // TODO =============
-  // bindActions      +
-  // enableAction     +
-  // disableAction    +
-  // attach           +
-  // detach           +
-  // isActionActive   +
-  // isKeyPressed     +
+  // TODO ==============================
+  // Fix isActionActive                -
+  // Fix  Action name transfer to DOM  -
 }
