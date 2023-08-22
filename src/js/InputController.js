@@ -246,10 +246,11 @@ class InputController extends EventTarget {
       return false;
     }
 
-    return (
-      (this.actions[action].enabled ?? false) &&
-      this.actions[action].keys.includes(true)
-    );
+    const isAnyKeyPressedInAction =
+      this.actions[action].keys.find(key => this.isKeyPressed(key)) !==
+      undefined;
+
+    return (this.actions[action].enabled ?? false) && isAnyKeyPressedInAction;
   }
 
   /**
