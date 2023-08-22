@@ -139,7 +139,7 @@ class InputController extends EventTarget {
    */
   bindCoreEvents() {
     /** Отслеживаем любые нажатия, запоминаем код кнопки. */
-    document.addEventListener('keydown', this.onKeydown);
+    document.addEventListener('keydown', ev => this.onKeydown(ev));
   }
 
   /**
