@@ -246,6 +246,7 @@ class InputController extends EventTarget {
         },
         {
           signal: this._ABORT_CONTROLLER.signal,
+          once: true,
         }
       );
     });
@@ -261,6 +262,7 @@ class InputController extends EventTarget {
         },
         {
           signal: this._ABORT_CONTROLLER.signal,
+          once: true,
         }
       );
     });
