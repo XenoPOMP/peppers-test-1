@@ -85,30 +85,24 @@ class InputController extends EventTarget {
 
     /** @returns {boolean} */
     const isAnyActionActive = () => {
-      return Object.keys(this.actions)
-        .map(key => {
-          const currentActionKeys = this.actions[key].keys;
-          const isAnyKeyPressed = currentActionKeys
-            .map(key => this.isKeyPressed(key))
-            .includes(true);
+      const result =
+        Object.keys(this.actions).find(key => {
+          return (
+            this.actions[key].keys.find(keyCode =>
+              this.isKeyPressed(keyCode)
+            ) !== undefined
+          );
+        }) !== undefined;
 
-          // console.log({
-          //   actionName: key,
-          //   targetKeys: currentActionKeys,
-          //   anyKeyPressed: isAnyKeyPressed,
-          //   keyHeap: this._CURRENT_PRESSED_KEYS_HEAP,
-          // });
-
-          return isAnyKeyPressed;
-        })
-        .includes(true);
+      return result;
     };
 
     /** Отслеживаем любые нажатия, запоминаем код кнопки. */
     document.addEventListener('keydown', ev => {
       const { keyCode } = ev;
 
-      this._ACTIVE_STATE._active = isAnyActionActive();
+      this._ACTIVE_STATE._active =
+        isAnyActionActive() && target !== null && this.enabled;
 
       if (!this._ACTIVE_STATE._active) {
         this.dispatchEvent(this.activate);
@@ -324,28 +318,54 @@ class InputController extends EventTarget {
       return;
     }
 
-    /** Пробегаемся циклом по всем экшенам, проверяем нажатие нужной кнопки. */
-    Object.keys(this.actions).forEach(actionName => {
-      const { keys, enabled, activate } = this.actions[actionName];
+    /** Новая реализация. */
+    Object.keys(this.actions).find(name => {
+      const { keys, enabled, activate } = this.actions[name];
 
-      /**
-       * Если событие включено, то выполняем некий колбэк.
-       */
-      if (enabled ?? false) {
-        keys.forEach(key => {
-          if (this.isKeyPressed(key)) {
-            /** Сюда нужно вставить колбэк. */
-            console.log(
-              `Вызвано событие {${actionName}} посредством нажатия на кнопку [${key}]`
-            );
-
-            if (activate !== undefined) {
-              activate();
-            }
-          }
-        });
+      if (!enabled) {
+        return false;
       }
+
+      return keys.find(key => {
+        const isPressed = this.isKeyPressed(key);
+
+        if (isPressed) {
+          console.log(
+            `Вызвано событие {${name}} посредством нажатия на кнопку [${key}]`
+          );
+
+          if (activate !== undefined) {
+            activate();
+          }
+        }
+
+        return isPressed;
+      });
     });
+
+    /** Старая реализация. */
+    /** Пробегаемся циклом по всем экшенам, проверяем нажатие нужной кнопки. */
+    // Object.keys(this.actions).forEach(actionName => {
+    //   const { keys, enabled, activate } = this.actions[actionName];
+    //
+    //   /**
+    //    * Если событие включено, то выполняем некий колбэк.
+    //    */
+    //   if (enabled ?? false) {
+    //     keys.forEach(key => {
+    //       if (this.isKeyPressed(key)) {
+    //         /** Сюда нужно вставить колбэк. */
+    //         console.log(
+    //           `Вызвано событие {${actionName}} посредством нажатия на кнопку [${key}]`
+    //         );
+    //
+    //         if (activate !== undefined) {
+    //           activate();
+    //         }
+    //       }
+    //     });
+    //   }
+    // });
   }
 
   /**
@@ -357,26 +377,49 @@ class InputController extends EventTarget {
       return;
     }
 
-    /** Пробегаемся циклом по всем экшенам, проверяем нажатие нужной кнопки. */
-    Object.keys(this.actions).forEach(actionName => {
-      const { keys, enabled, deactivate } = this.actions[actionName];
+    /** Новая реализация. */
+    Object.keys(this.actions).find(name => {
+      const { keys, enabled, deactivate } = this.actions[name];
 
-      /**
-       * Если событие включено, то выполняем некий колбэк.
-       */
-      if (enabled ?? false) {
-        keys.forEach(key => {
-          if (this.isKeyPressed(key)) {
-            /** Сюда нужно вставить колбэк. */
-            console.log(`Событие {${actionName}} отработало.`);
-
-            if (deactivate !== undefined) {
-              deactivate();
-            }
-          }
-        });
+      if (!enabled) {
+        return false;
       }
+
+      return keys.find(key => {
+        const isPressed = this.isKeyPressed(key);
+
+        if (isPressed) {
+          console.log(`Событие {${name}} отработало.`);
+
+          if (deactivate !== undefined) {
+            deactivate();
+          }
+        }
+
+        return isPressed;
+      });
     });
+
+    /** Пробегаемся циклом по всем экшенам, проверяем нажатие нужной кнопки. */
+    // Object.keys(this.actions).forEach(actionName => {
+    //   const { keys, enabled, deactivate } = this.actions[actionName];
+
+    //   /**
+    //    * Если событие включено, то выполняем некий колбэк.
+    //    */
+    //   if (enabled ?? false) {
+    //     keys.forEach(key => {
+    //       if (this.isKeyPressed(key)) {
+    //         /** Сюда нужно вставить колбэк. */
+    //         console.log(`Событие {${actionName}} отработало.`);
+
+    //         if (deactivate !== undefined) {
+    //           deactivate();
+    //         }
+    //       }
+    //     });
+    //   }
+    // });
   }
 
   // TODO ==============================
