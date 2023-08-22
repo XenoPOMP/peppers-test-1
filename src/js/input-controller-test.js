@@ -99,12 +99,12 @@ devButtons.detachButton.onclick = () => {
 };
 
 devButtons.activateButton.onclick = () => {
-  controller.activate();
+  controller.activateController();
   inlineData();
 };
 
 devButtons.deactivateButton.onclick = () => {
-  controller.deactivate();
+  controller.deactivateController();
   inlineData();
 };
 

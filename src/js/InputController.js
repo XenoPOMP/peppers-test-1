@@ -70,12 +70,12 @@ class InputController {
   }
 
   /** Этот метод позволяет включать контроллер. */
-  activate() {
+  activateController() {
     this.enabled = true;
   }
 
   /** Этот метод позволяет выключать контроллер. */
-  deactivate() {
+  deactivateController() {
     this.enabled = false;
   }
 
