@@ -62,16 +62,23 @@ class InputController extends EventTarget {
 
     /** @returns {boolean} */
     const isAnyActionActive = () => {
-      const sups = Object.keys(this.actions).map(key => {
-        const currentActionKeys = this.actions[key].keys;
-        const isAnyKeyPressed = currentActionKeys
-          .map(key => this.isKeyPressed(key))
-          .includes(true);
+      return Object.keys(this.actions)
+        .map(key => {
+          const currentActionKeys = this.actions[key].keys;
+          const isAnyKeyPressed = currentActionKeys
+            .map(key => this.isKeyPressed(key))
+            .includes(true);
 
-        return isAnyKeyPressed;
-      });
+          // console.log({
+          //   actionName: key,
+          //   targetKeys: currentActionKeys,
+          //   anyKeyPressed: isAnyKeyPressed,
+          //   keyHeap: this._CURRENT_PRESSED_KEYS_HEAP,
+          // });
 
-      return false;
+          return isAnyKeyPressed;
+        })
+        .includes(true);
     };
 
     /** Отслеживаем любые нажатия, запоминаем код кнопки. */
@@ -104,6 +111,14 @@ class InputController extends EventTarget {
         /** Вызываем событие deactivate */
         this.dispatchEvent(this.deactivate);
       }
+    });
+
+    this.addEventListener('activate', () => {
+      console.warn('Event activated via action.');
+    });
+
+    this.addEventListener('deactivate', () => {
+      console.warn('Event deactivated via action.');
     });
   }
 
