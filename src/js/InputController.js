@@ -238,7 +238,7 @@ class InputController {
 
     /** Пробегаемся циклом по всем экшенам, проверяем нажатие нужной кнопки. */
     Object.keys(this.actions).forEach(actionName => {
-      const { keys, enabled, callback } = this.actions[actionName];
+      const { keys, enabled, activate } = this.actions[actionName];
 
       /**
        * Если событие включено, то выполняем некий колбэк.
@@ -251,8 +251,8 @@ class InputController {
               `Вызвано событие {${actionName}} посредством нажатия на кнопку [${key}]`
             );
 
-            if (callback !== undefined) {
-              callback();
+            if (activate !== undefined) {
+              activate();
             }
           }
         });
@@ -271,7 +271,7 @@ class InputController {
 
     /** Пробегаемся циклом по всем экшенам, проверяем нажатие нужной кнопки. */
     Object.keys(this.actions).forEach(actionName => {
-      const { keys, enabled, afterEvent } = this.actions[actionName];
+      const { keys, enabled, deactivate } = this.actions[actionName];
 
       /**
        * Если событие включено, то выполняем некий колбэк.
@@ -282,8 +282,8 @@ class InputController {
             /** Сюда нужно вставить колбэк. */
             console.log(`Событие {${actionName}} отработало.`);
 
-            if (afterEvent !== undefined) {
-              afterEvent();
+            if (deactivate !== undefined) {
+              deactivate();
             }
           }
         });
