@@ -237,7 +237,8 @@ class InputController extends EventTarget {
     }
 
     return (
-      (this.actions[action].enabled ?? false) && this._ACTIVE_STATE._active
+      (this.actions[action].enabled ?? false) &&
+      this.actions[action].keys.includes(true)
     );
   }
 
