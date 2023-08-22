@@ -7,7 +7,7 @@ body {
     gap: 1rem;
     font-size: 1rem;
     padding: 1rem;
-    // overflow: hidden;
+    overflow: hidden;
     font-variant-numeric: tabular-nums;
 }
 
