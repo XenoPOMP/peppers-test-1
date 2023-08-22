@@ -225,6 +225,9 @@ class InputController extends EventTarget {
           signal: this._ABORT_CONTROLLER.signal,
         }
       );
+    });
+
+    this.addEventListener('deactivate', () => {
       this.target.addEventListener(
         'keyup',
         () => {
