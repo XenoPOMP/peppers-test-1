@@ -133,7 +133,10 @@ class InputController extends EventTarget {
     }
   }
 
-  onKeyup() {
+  /**
+   * @param {KeyboardEvent} event
+   */
+  onKeyup(event) {
     if (this._ACTIVE_STATE._active) {
       /** Вызываем событие deactivate */
       this.dispatchEvent(this.deactivate);
@@ -150,7 +153,7 @@ class InputController extends EventTarget {
    */
   bindCoreEvents() {
     /** Отслеживаем любые нажатия, запоминаем код кнопки. */
-    document.addEventListener('keydown', ev => this.onKeydown(ev));
+    document.addEventListener('keydown', this.onKeydown.bind(this));
   }
 
   /**
@@ -172,7 +175,7 @@ class InputController extends EventTarget {
    * для отладки.
    */
   unbindCoreEvents() {
-    document.addEventListener('keyup', () => this.onKeyup());
+    document.addEventListener('keyup', this.onKeyup.bind(this));
   }
 
   /** Этот метод позволяет включать контроллер. */
