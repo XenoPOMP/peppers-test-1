@@ -83,26 +83,25 @@ class InputController extends EventTarget {
       this.bindActions(actionsToBind);
     }
 
-    /** @returns {boolean} */
-    const isAnyActionActive = () => {
-      const result =
-        Object.keys(this.actions).find(key => {
-          return (
-            this.actions[key].keys.find(keyCode =>
-              this.isKeyPressed(keyCode)
-            ) !== undefined
-          );
-        }) !== undefined;
-
-      return result;
-    };
-
     this.bindCoreEvents();
 
     this.unbindCoreEvents();
 
     this.bindLogEvents();
   }
+
+  /** @returns {boolean} */
+  isAnyActionActive = () => {
+    const result =
+      Object.keys(this.actions).find(key => {
+        return (
+          this.actions[key].keys.find(keyCode => this.isKeyPressed(keyCode)) !==
+          undefined
+        );
+      }) !== undefined;
+
+    return result;
+  };
 
   /**
    * В этой функции происходит  навешение глобальных слушателей событий
@@ -114,7 +113,7 @@ class InputController extends EventTarget {
       const { keyCode } = ev;
 
       this._ACTIVE_STATE._active =
-        isAnyActionActive() && target !== null && this.enabled;
+        this.isAnyActionActive() && this.target !== null && this.enabled;
 
       if (!this._ACTIVE_STATE._active) {
         this.dispatchEvent(this.activate);
@@ -163,7 +162,7 @@ class InputController extends EventTarget {
         this.dispatchEvent(this.deactivate);
       }
 
-      if (!isAnyActionActive()) {
+      if (!this.isAnyActionActive()) {
         this._ACTIVE_STATE._active = false;
       }
     });
