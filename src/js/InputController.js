@@ -60,11 +60,27 @@ class InputController extends EventTarget {
       this.bindActions(actionsToBind);
     }
 
+    /** @returns {boolean} */
+    const isAnyActionActive = () => {
+      const sups = Object.keys(this.actions).map(key => {
+        const currentActionKeys = this.actions[key].keys;
+        const isAnyKeyPressed = currentActionKeys
+          .map(key => this.isKeyPressed(key))
+          .includes(true);
+
+        return isAnyKeyPressed;
+      });
+
+      return false;
+    };
+
     /** Отслеживаем любые нажатия, запоминаем код кнопки. */
     document.addEventListener('keydown', ev => {
       const { keyCode } = ev;
 
-      this.dispatchEvent(this.activate);
+      if (isAnyActionActive()) {
+        this.dispatchEvent(this.activate);
+      }
 
       if (keyCode !== this._CURRENT_PRESSED_KEYS_HEAP.at(0)) {
         /** Добавляем нажатую кнопку в начало кучи. */
@@ -84,8 +100,10 @@ class InputController extends EventTarget {
     });
 
     document.addEventListener('keyup', () => {
-      /** Вызываем событие deactivate */
-      this.dispatchEvent(this.deactivate);
+      if (isAnyActionActive()) {
+        /** Вызываем событие deactivate */
+        this.dispatchEvent(this.deactivate);
+      }
     });
   }
 
