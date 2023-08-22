@@ -137,7 +137,17 @@ class InputController {
       return false;
     }
 
-    return this.actions[action].enabled ?? false;
+    /**
+     * Проверяем, что какая-нибудь кнопка из
+     * события нажата.
+     *
+     * @type {boolean}
+     */
+    const isAnyKeyPressed = this.actions[action].keys
+      .map(key => this.isKeyPressed(key))
+      .includes(true);
+
+    return (this.actions[action].enabled ?? false) && isAnyKeyPressed;
   }
 
   /**
