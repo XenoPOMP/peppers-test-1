@@ -85,23 +85,19 @@ class InputController extends EventTarget {
 
     /** @returns {boolean} */
     const isAnyActionActive = () => {
-      return Object.keys(this.actions)
-        .map(key => {
-          const currentActionKeys = this.actions[key].keys;
-          const isAnyKeyPressed = currentActionKeys
-            .map(key => this.isKeyPressed(key))
-            .includes(true);
+      const result =
+        Object.keys(this.actions).find(key =>
+          this.actions[key].keys.find(keyCode => this.isKeyPressed(keyCode))
+        ) !== undefined;
 
-          // console.log({
-          //   actionName: key,
-          //   targetKeys: currentActionKeys,
-          //   anyKeyPressed: isAnyKeyPressed,
-          //   keyHeap: this._CURRENT_PRESSED_KEYS_HEAP,
-          // });
+      return result;
 
-          return isAnyKeyPressed;
-        })
-        .includes(true);
+      // console.log({
+      //   actionName: key,
+      //   targetKeys: currentActionKeys,
+      //   anyKeyPressed: isAnyKeyPressed,
+      //   keyHeap: this._CURRENT_PRESSED_KEYS_HEAP,
+      // });
     };
 
     /** Отслеживаем любые нажатия, запоминаем код кнопки. */
