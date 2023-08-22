@@ -97,6 +97,18 @@ class InputController extends EventTarget {
       return result;
     };
 
+    this.bindCoreEvents();
+
+    this.unbindCoreEvents();
+
+    this.bindLogEvents();
+  }
+
+  /**
+   * В этой функции происходит  навешение глобальных слушателей событий
+   * (keypress, keyup), которые отслеживают любые нажатия на любые кнопки.
+   */
+  bindCoreEvents() {
     /** Отслеживаем любые нажатия, запоминаем код кнопки. */
     document.addEventListener('keydown', ev => {
       const { keyCode } = ev;
@@ -124,7 +136,27 @@ class InputController extends EventTarget {
         );
       }
     });
+  }
 
+  /**
+   * В этой функции происходит  навешение глобальных слушателей событий
+   * для отладки.
+   */
+  bindLogEvents() {
+    this.addEventListener('activate', () => {
+      console.warn('Event activated via action.');
+    });
+
+    this.addEventListener('deactivate', () => {
+      console.warn('Event deactivated via action.');
+    });
+  }
+
+  /**
+   * В этой функции происходит снятие глобальных слушателей событий
+   * для отладки.
+   */
+  unbindCoreEvents() {
     document.addEventListener('keyup', () => {
       if (this._ACTIVE_STATE._active) {
         /** Вызываем событие deactivate */
@@ -134,14 +166,6 @@ class InputController extends EventTarget {
       if (!isAnyActionActive()) {
         this._ACTIVE_STATE._active = false;
       }
-    });
-
-    this.addEventListener('activate', () => {
-      console.warn('Event activated via action.');
-    });
-
-    this.addEventListener('deactivate', () => {
-      console.warn('Event deactivated via action.');
     });
   }
 
