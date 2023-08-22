@@ -13,7 +13,7 @@ class InputController {
   /** @type {string|undefined} */
   ACTION_DEACTIVATED = undefined;
 
-  /** @type {Record<string, { keys: number[], enabled?: boolean, callback?: () => any, afterEvent?: () => any }>} */
+  /** @type {Record<string, { keys: number[], enabled?: boolean, activate?: () => any, deactivate?: () => any }>} */
   actions = {};
 
   /** @type {HTMLElement|Document|null} */
@@ -29,7 +29,7 @@ class InputController {
   _ABORT_CONTROLLER = new AbortController();
 
   /**
-   * @param {Record<string, { keys: number[], enabled?: boolean, callback?: () => any, afterEvent?: () => any }>} actionsToBind         события, которые нужно забиндить.
+   * @param {Record<string, { keys: number[], enabled?: boolean, activate?: () => any, deactivate?: () => any }>} actionsToBind         события, которые нужно забиндить.
    * @param {HTMLElement|Document} [target]                                                                                             цель, на которую будут свешиваться слушатели событий
    *                                                                                                                                    (**null**) по умолчанию.
    */
@@ -82,7 +82,7 @@ class InputController {
   /**
    * Этот метод занимается биндингом событий.
    *
-   * @param {Record<string, { keys: number[], enabled?: boolean, callback?: () => any, afterEvent?: () => any }>} actionsToBind        события, которые нужно забиндить.
+   * @param {Record<string, { keys: number[], enabled?: boolean, activate?: () => any, deactivate?: () => any }>} actionsToBind        события, которые нужно забиндить.
    */
   bindActions(actionsToBind) {
     /**

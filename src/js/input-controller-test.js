@@ -43,22 +43,22 @@ const controller = new InputController({
   left: {
     keys: [65, 1092],
     enabled: true,
-    callback: () => moveSquare(-1, 0),
+    activate: () => moveSquare(-1, 0),
   },
   bottom: {
     keys: [83, 1099],
     enabled: true,
-    callback: () => moveSquare(0, 1),
+    activate: () => moveSquare(0, 1),
   },
   right: {
     keys: [68, 1074],
     enabled: true,
-    callback: () => moveSquare(1, 0),
+    activate: () => moveSquare(1, 0),
   },
   top: {
     keys: [87, 1094],
     enabled: true,
-    callback: () => moveSquare(0, -1),
+    activate: () => moveSquare(0, -1),
   },
 });
 
@@ -113,13 +113,13 @@ devButtons.bindJumpButton.onclick = () => {
     jump: {
       keys: [32],
       enabled: true,
-      callback: () => {
+      activate: () => {
         /** @type {HTMLDivElement} */
         const reqSquare = document.querySelector('#redSquare');
 
         reqSquare.classList.add('jump');
       },
-      afterEvent: () => {
+      deactivate: () => {
         /** @type {HTMLDivElement} */
         const reqSquare = document.querySelector('#redSquare');
 
