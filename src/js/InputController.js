@@ -1,3 +1,24 @@
+class Action {
+  _active = false;
+
+  /**
+   * @param {{onChange?: () => any} | undefined} props
+   */
+  constructor(props) {
+    this.onChange = props?.onChange;
+  }
+
+  set active(active) {
+    if (this.active === active) return;
+    this._active = active;
+
+    this.onChange?.(this);
+  }
+
+  get active() {
+    return this._active;
+  }
+}
 /**
  * Абстрактный класс, который предоставляет интерфейс для
  * других контроллеров.
@@ -27,6 +48,8 @@ class InputController extends EventTarget {
 
   /** @type {AbortController} */
   _ABORT_CONTROLLER = new AbortController();
+
+  _ACTIVE_STATE = new Action({});
 
   /** @type {Event} */
   activate = new Event('activate', {
@@ -85,7 +108,9 @@ class InputController extends EventTarget {
     document.addEventListener('keydown', ev => {
       const { keyCode } = ev;
 
-      if (isAnyActionActive()) {
+      this._ACTIVE_STATE._active = isAnyActionActive();
+
+      if (!this._ACTIVE_STATE._active) {
         this.dispatchEvent(this.activate);
       }
 
@@ -107,9 +132,13 @@ class InputController extends EventTarget {
     });
 
     document.addEventListener('keyup', () => {
-      if (isAnyActionActive()) {
+      if (this._ACTIVE_STATE._active) {
         /** Вызываем событие deactivate */
         this.dispatchEvent(this.deactivate);
+      }
+
+      if (!isAnyActionActive()) {
+        this._ACTIVE_STATE._active = false;
       }
     });
 
@@ -190,17 +219,9 @@ class InputController extends EventTarget {
       return false;
     }
 
-    /**
-     * Проверяем, что какая-нибудь кнопка из
-     * события нажата.
-     *
-     * @type {boolean}
-     */
-    const isAnyKeyPressed = this.actions[action].keys
-      .map(key => this.isKeyPressed(key))
-      .includes(true);
-
-    return (this.actions[action].enabled ?? false) && isAnyKeyPressed;
+    return (
+      (this.actions[action].enabled ?? false) && this._ACTIVE_STATE._active
+    );
   }
 
   /**
