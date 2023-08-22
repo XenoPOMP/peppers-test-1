@@ -87,16 +87,6 @@ class InputController extends EventTarget {
       /** Вызываем событие deactivate */
       this.dispatchEvent(this.deactivate);
     });
-
-    this.addEventListener('activate', ev => {
-      // console.log('Emitting [activate event]');
-      // console.log(ev);
-    });
-
-    this.addEventListener('deactivate', ev => {
-      // console.log('Emitting [deactivate event]');
-      // console.log(ev);
-    });
   }
 
   /** Этот метод позволяет включать контроллер. */
