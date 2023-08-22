@@ -91,13 +91,6 @@ class InputController extends EventTarget {
         ) !== undefined;
 
       return result;
-
-      // console.log({
-      //   actionName: key,
-      //   targetKeys: currentActionKeys,
-      //   anyKeyPressed: isAnyKeyPressed,
-      //   keyHeap: this._CURRENT_PRESSED_KEYS_HEAP,
-      // });
     };
 
     /** Отслеживаем любые нажатия, запоминаем код кнопки. */
