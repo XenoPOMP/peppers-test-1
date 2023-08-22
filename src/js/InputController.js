@@ -184,9 +184,13 @@ class InputController {
     /** Записываем в переменную цели новую цель. */
     this.target = target;
     /** Вешаем на новую цель слушатель событий. */
-    this.target.addEventListener('keydown', () => this.onEvent(), {
-      signal: this._ABORT_CONTROLLER.signal,
-    });
+    this.target.addEventListener(
+      'InputController:activate',
+      () => this.onEvent(),
+      {
+        signal: this._ABORT_CONTROLLER.signal,
+      }
+    );
     this.target.addEventListener(
       'keyup',
       () => {
