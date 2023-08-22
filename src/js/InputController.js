@@ -325,5 +325,5 @@ class InputController extends EventTarget {
 
   // TODO ==============================
   // Fix isActionActive                +
-  // Fix  Action name transfer to DOM  -
+  // Fix  Action name transfer to DOM  +
 }
