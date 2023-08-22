@@ -2,7 +2,7 @@
  * Абстрактный класс, который предоставляет интерфейс для
  * других контроллеров.
  */
-class InputController {
+class InputController extends EventTarget {
   /** @type {boolean} */
   enabled = true;
   /** @type {boolean} */
@@ -28,12 +28,25 @@ class InputController {
   /** @type {AbortController} */
   _ABORT_CONTROLLER = new AbortController();
 
+  /** @type {Event} */
+  activate = new Event('activate', {
+    bubbles: true,
+    cancelable: false,
+  });
+  /** @type {Event} */
+  deactivate = new Event('deactivate', {
+    bubbles: true,
+    cancelable: false,
+  });
+
   /**
    * @param {Record<string, { keys: number[], enabled?: boolean, activate?: () => any, deactivate?: () => any }>} actionsToBind         события, которые нужно забиндить.
    * @param {HTMLElement|Document} [target]                                                                                             цель, на которую будут свешиваться слушатели событий
    *                                                                                                                                    (**null**) по умолчанию.
    */
   constructor(actionsToBind, target) {
+    super();
+
     /**
      * Присваиваем переменной target значение из аргумента,
      * есди таковое имеется.
@@ -51,6 +64,8 @@ class InputController {
     document.addEventListener('keydown', ev => {
       const { keyCode } = ev;
 
+      this.dispatchEvent(this.activate);
+
       if (keyCode !== this._CURRENT_PRESSED_KEYS_HEAP.at(0)) {
         /** Добавляем нажатую кнопку в начало кучи. */
         this._CURRENT_PRESSED_KEYS_HEAP.unshift(keyCode);
@@ -66,6 +81,21 @@ class InputController {
           this._CURRENT_PRESSED_KEYS_HEAP.length - 1
         );
       }
+    });
+
+    document.addEventListener('keyup', () => {
+      /** Вызываем событие deactivate */
+      this.dispatchEvent(this.deactivate);
+    });
+
+    this.addEventListener('activate', ev => {
+      // console.log('Emitting [activate event]');
+      // console.log(ev);
+    });
+
+    this.addEventListener('deactivate', ev => {
+      // console.log('Emitting [deactivate event]');
+      // console.log(ev);
     });
   }
 
@@ -183,26 +213,31 @@ class InputController {
 
     /** Записываем в переменную цели новую цель. */
     this.target = target;
-    /** Вешаем на новую цель слушатель событий. */
-    this.target.addEventListener(
-      'InputController:activate',
-      () => this.onEvent(),
-      {
-        signal: this._ABORT_CONTROLLER.signal,
-      }
-    );
-    this.target.addEventListener(
-      'keyup',
-      () => {
-        this.afterEvent();
 
-        /** Очищаем очередь кнопок. */
-        this._CURRENT_PRESSED_KEYS_HEAP = [];
-      },
-      {
-        signal: this._ABORT_CONTROLLER.signal,
-      }
-    );
+    this.addEventListener('activate', () => {
+      /** Вешаем на новую цель слушатель событий. */
+      this.target.addEventListener(
+        'keypress',
+        () => {
+          this.onEvent();
+        },
+        {
+          signal: this._ABORT_CONTROLLER.signal,
+        }
+      );
+      this.target.addEventListener(
+        'keyup',
+        () => {
+          this.afterEvent();
+
+          /** Очищаем очередь кнопок. */
+          this._CURRENT_PRESSED_KEYS_HEAP = [];
+        },
+        {
+          signal: this._ABORT_CONTROLLER.signal,
+        }
+      );
+    });
   }
 
   /**
