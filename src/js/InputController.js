@@ -133,6 +133,17 @@ class InputController extends EventTarget {
     }
   }
 
+  onKeyup() {
+    if (this._ACTIVE_STATE._active) {
+      /** Вызываем событие deactivate */
+      this.dispatchEvent(this.deactivate);
+    }
+
+    if (!this.isAnyActionActive()) {
+      this._ACTIVE_STATE._active = false;
+    }
+  }
+
   /**
    * В этой функции происходит  навешение глобальных слушателей событий
    * (keypress, keyup), которые отслеживают любые нажатия на любые кнопки.
@@ -161,16 +172,7 @@ class InputController extends EventTarget {
    * для отладки.
    */
   unbindCoreEvents() {
-    document.addEventListener('keyup', () => {
-      if (this._ACTIVE_STATE._active) {
-        /** Вызываем событие deactivate */
-        this.dispatchEvent(this.deactivate);
-      }
-
-      if (!this.isAnyActionActive()) {
-        this._ACTIVE_STATE._active = false;
-      }
-    });
+    document.addEventListener('keyup', () => this.onKeyup());
   }
 
   /** Этот метод позволяет включать контроллер. */
