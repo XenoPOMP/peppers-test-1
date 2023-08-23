@@ -109,6 +109,8 @@ class InputObserver {
     this._processInputDevice(this.keyboard);
 
     this._setLastActiveDevice();
+
+    console.log(this.keyboard);
   }
 }
 
