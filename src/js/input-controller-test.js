@@ -117,13 +117,13 @@ devButtons.bindJumpButton.onclick = () => {
     jump: {
       keys: [32],
       enabled: true,
-      activate: () => {
+      onEvent: () => {
         /** @type {HTMLDivElement} */
         const reqSquare = document.querySelector('#redSquare');
 
         reqSquare.classList.add('jump');
       },
-      deactivate: () => {
+      afterEvent: () => {
         /** @type {HTMLDivElement} */
         const reqSquare = document.querySelector('#redSquare');
 
