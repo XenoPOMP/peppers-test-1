@@ -138,6 +138,7 @@ class InputObserver {
 class InputController {
   observer = new InputObserver({
     manualInit: false,
+    updateType: 'always',
     autodetectDevice: false,
   });
 
