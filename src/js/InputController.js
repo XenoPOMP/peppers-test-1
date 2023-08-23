@@ -216,17 +216,17 @@ class InputController {
     return actionExists && hasActiveKey(targetAction);
   }
 
-  // TODO: реализовать isAnyActionActive
+  // DONE: реализовать isAnyActionActive
   isAnyActionActive() {
     const actionNames = Object.keys(this.actions);
 
     const result = actionNames.find(actionName => {
       const targetAction = this.actions[actionName];
 
-      return this.isActionActive(targetAction);
+      return this.isActionActive(actionName);
     });
 
-    return result;
+    return result !== undefined;
   }
 
   // DONE: реализовать isKeyPressed
