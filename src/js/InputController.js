@@ -140,8 +140,7 @@ class InputController {
   observer = new InputObserver({
     manualInit: false,
     updateType: 'always',
-    autodetectDevice: false,
-    initialDevice: 'keyboard',
+    autodetectDevice: true,
   });
 
   abortController = new AbortController();
