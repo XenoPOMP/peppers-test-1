@@ -124,6 +124,10 @@ class InputController {
   /** @type {HTMLElement|Document|Window|null} */
   target = null;
 
+  // КОНСТАНТЫ
+  ACTION_ACTIVATED = 'input-controller:action-activated';
+  ACTION_DEACTIVATED = 'input-controller:action-deactivated';
+
   /**
    *
    * @param {Record<string, { keys: number[], enabled?: boolean }>} [actionsToBind]
@@ -173,6 +177,14 @@ class InputController {
     this.target = target;
 
     this.abortController = new AbortController();
+
+    this.target.addEventListener(this.ACTION_ACTIVATED, () => {
+      console.log('Activation event emitted!');
+    });
+
+    this.target.addEventListener(this.ACTION_DEACTIVATED, () => {
+      console.log('Deactivation event emitted!');
+    });
   }
 
   // DONE: реализовать detach
