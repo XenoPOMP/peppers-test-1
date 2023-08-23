@@ -1,3 +1,28 @@
 {
-    "todo-tree.tree.showBadges": true
+    "todo-tree.tree.showBadges": true,
+    "todo-tree.general.tags": ["TODO", "FIX", "BUG", "DONE"],
+    "todo-tree.highlights.customHighlight": {
+        "TODO": {
+        "icon": "question",
+        "iconColour": "gold"
+        },
+        "FIX": {
+        "icon": "tools",
+        "iconColour": "#FFF",
+        "foreground": "black",
+        "background": "gold"
+        },
+        "BUG": {
+        "icon": "circle-slash",
+        "iconColour": "#F00",
+        "foreground": "#FFF",
+        "background": "#F00"
+        },
+        "DONE": {
+        "icon": "issue-closed",
+        "iconColour": "#17E60F",
+        "foreground": "#000",
+        "background": "#17E60F"
+        }
+    }
 }
