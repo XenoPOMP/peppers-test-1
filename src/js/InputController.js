@@ -121,8 +121,14 @@ class InputController {
 
   /** @type {Record<string, { keys: number[], enabled?: boolean }>} */
   actions = {};
+  /** @type {HTMLElement|Document|Window|null} */
   target = null;
 
+  /**
+   *
+   * @param {Record<string, { keys: number[], enabled?: boolean }>} [actionsToBind]
+   * @param {HTMLElement|Document|Window} [target]
+   */
   constructor(actionsToBind, target) {
     if (actionsToBind !== undefined) {
       this.bindActions();
@@ -182,7 +188,7 @@ class InputController {
 
     if (!actionExists) {
       throw new Error(
-        'You`re trying to check action`s status which doesn`t exist.',
+        `You\`re trying to check action\`s status which doesn\`t exist (${action}).`,
       );
     }
   }
