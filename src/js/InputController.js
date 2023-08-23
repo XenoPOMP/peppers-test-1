@@ -130,8 +130,8 @@ class InputController {
 
   /**
    *
-   * @param {Record<string, { keys: number[], enabled?: boolean }>} [actionsToBind]
-   * @param {HTMLElement|Document|Window} [target]
+   * @param {typeof InputController.prototype.actions} [actionsToBind]
+   * @param {typeof InputController.prototype.actions} [target]
    */
   constructor(actionsToBind, target) {
     if (actionsToBind !== undefined) {
@@ -169,7 +169,7 @@ class InputController {
   // TODO: реализовать attach
   /**
    *
-   * @param {HTMLElement|Document|Window} target
+   * @param {NonNullable<typeof InputController.prototype.target>} target
    * @param {boolean} [dontEbable]
    */
   attach(target, dontEbable = false) {
@@ -196,6 +196,7 @@ class InputController {
   // TODO: реализовать isActionActive
   /** @param {string} action */
   isActionActive(action) {
+    const targetAction = this.actions[action];
     const actionExists = action in this.actions;
 
     if (!actionExists) {
@@ -205,9 +206,11 @@ class InputController {
     }
 
     /**
-     * @param {{ keys: number[], enabled?: boolean }} action    объект с экшеном.
+     * @param {typeof targetAction} action    объект с экшеном.
      */
     const hasActiveKey = action => {};
+
+    console.log(hasActiveKey(targetAction));
 
     return actionExists;
   }
