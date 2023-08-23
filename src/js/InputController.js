@@ -145,7 +145,11 @@ class InputController {
     addEventListener('keydown', () => {
       this.observer.update();
 
-      if (this.target !== null && this.target !== undefined) {
+      if (
+        this.target !== null &&
+        this.target !== undefined
+        // && this.isAnyActionActive()
+      ) {
         this.target.dispatchEvent(new Event(this.ACTION_ACTIVATED));
       }
     });
@@ -153,7 +157,11 @@ class InputController {
     addEventListener('keyup', () => {
       this.observer.update();
 
-      if (this.target !== null && this.target !== undefined) {
+      if (
+        this.target !== null &&
+        this.target !== undefined
+        // && !this.isAnyActionActive()
+      ) {
         this.target.dispatchEvent(new Event(this.ACTION_DEACTIVATED));
       }
     });
