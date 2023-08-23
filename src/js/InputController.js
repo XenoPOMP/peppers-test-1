@@ -315,7 +315,7 @@ class InputController {
       this.target = target;
     }
 
-    addEventListener('keydown', () => {
+    const activateAction = () => {
       this.observer.update();
 
       if (
@@ -325,9 +325,9 @@ class InputController {
       ) {
         this.target.dispatchEvent(new Event(this.ACTION_ACTIVATED));
       }
-    });
+    };
 
-    addEventListener('keyup', () => {
+    const deactivateAction = () => {
       this.observer.update();
 
       if (
@@ -337,7 +337,13 @@ class InputController {
       ) {
         this.target.dispatchEvent(new Event(this.ACTION_DEACTIVATED));
       }
-    });
+    };
+
+    addEventListener('keydown', () => activateAction());
+    addEventListener('mousedown', () => activateAction());
+
+    addEventListener('keyup', () => deactivateAction());
+    addEventListener('mouseup', () => deactivateAction());
   }
 
   /** @param {typeof InputController.prototype.actions} actionsToBind */

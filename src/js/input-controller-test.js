@@ -67,10 +67,17 @@ controller.bindActions({
     onEvent: () => moveSquare(0, -1),
   },
   lmb: {
+    keys: [0],
+    enabled: true,
+    onEvent: () => {
+      console.log('Вы нажали левую кнопку мыши.');
+    },
+  },
+  rmb: {
     keys: [1],
     enabled: true,
     onEvent: () => {
-      alert('Вы нажали левую кнопку мыши.');
+      console.log('Вы нажали правую кнопку мыши.');
     },
   },
 });
