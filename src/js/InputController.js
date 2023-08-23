@@ -141,6 +141,7 @@ class InputController {
       this.target = target;
     }
 
+    // TODO: добавить условие для диспатча ивента
     addEventListener('keydown', () => {
       this.observer.update();
 
@@ -173,7 +174,7 @@ class InputController {
     this.actions[actionName].enabled = false;
   }
 
-  // TODO: реализовать attach
+  // DONE: реализовать attach
   /**
    * @param {NonNullable<typeof InputController.prototype.target>} target
    * @param {boolean} [dontEbable]
