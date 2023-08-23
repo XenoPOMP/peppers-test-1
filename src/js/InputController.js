@@ -219,6 +219,10 @@ class InputController {
 
   /** @param {'keypress'|'keyup'} eventType */
   onEvent(eventType) {
+    if (!this.enabled) {
+      return;
+    }
+
     const actionNames = Object.keys(this.actions);
 
     const activeActionsNames = actionNames.filter(name =>
