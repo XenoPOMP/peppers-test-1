@@ -163,6 +163,60 @@ class InputObserver {
     removalDelay.forEach(button => inputDevice._buttonsToRemove.push(button));
   }
 
+  _processGamepad() {
+    const gamepads = navigator.getGamepads();
+
+    const firstGamepad = gamepads[0];
+
+    if (firstGamepad !== null) {
+      /** @returns {{declaration: GamepadButton, index: number}[]} */
+      const buttons = firstGamepad.buttons.map((button, i) => {
+        return {
+          declaration: button,
+          index: i,
+        };
+      });
+
+      const pressedButtons = buttons.filter(
+        button => button.declaration.pressed,
+      );
+
+      this.gamepad._previouslyPressed = cloneDeep(this.gamepad.pressed);
+      this.gamepad.pressed = [];
+
+      pressedButtons.forEach(pressedButton => {
+        const { declaration, index } = pressedButton;
+
+        const buttonName = this.gamepad.buttonMap[index];
+        this.gamepad.pressed.push(buttonName);
+      });
+
+      this.gamepad.justPressed = this.gamepad.pressed.filter(
+        button => !this.gamepad._previouslyPressed.includes(button),
+      );
+      this.gamepad.axes = firstGamepad.axes;
+    }
+  }
+
+  _processGamepadConnection() {
+    // Определяем, был ли геймпад подключен только что
+    if (this.gamepad.connected && !this.gamepad._previouslyConnected) {
+      this.gamepad.justConnected = true;
+    } else {
+      this.gamepad.justConnected = false;
+    }
+
+    // Определяем, был ли геймпад отключен только что
+    if (!this.gamepad.connected && this.gamepad._previouslyConnected) {
+      this.gamepad.justDisconnected = true;
+    } else {
+      this.gamepad.justDisconnected = false;
+    }
+
+    // Запоминаем статус подключения в переменной _previouslyConnected
+    this.gamepad._previouslyConnected = this.gamepad.connected;
+  }
+
   _setLastActiveDevice() {
     if (this.keyboard.justPressed.length > 0) {
       this.lastActiveDevice = 'keyboard';
@@ -171,6 +225,12 @@ class InputObserver {
 
   update() {
     this._processInputDevice(this.keyboard);
+
+    this._processGamepadConnection();
+
+    if (this.gamepad.connected) {
+      this._processGamepad();
+    }
 
     if (this.autodetectDevice) {
       this._setLastActiveDevice();
