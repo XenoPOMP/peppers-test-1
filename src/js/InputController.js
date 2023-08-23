@@ -303,15 +303,17 @@ class InputObserver {
 
 class ObserverPlugin {
   /**
-   * @param {{name: PropertyKey, observer: InputObserver}} props
+   * @param {{name: PropertyKey, observer: InputObserver, eventTypes?: { onButtonPress: string, onButtonUp: string }}} props
    */
   constructor(props) {
-    const { name, observer } = props;
+    const { name, observer, eventTypes } = props;
 
     /** @type {string} */
     this.name = name;
     /** @type {InputObserver} */
     this.observer = observer;
+    /** @type {typeof eventTypes} */
+    this.eventTypes = eventTypes;
   }
 
   /**
