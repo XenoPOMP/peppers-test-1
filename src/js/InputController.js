@@ -129,9 +129,8 @@ class InputController {
   ACTION_DEACTIVATED = 'input-controller:action-deactivated';
 
   /**
-   *
    * @param {typeof InputController.prototype.actions} [actionsToBind]
-   * @param {typeof InputController.prototype.actions} [target]
+   * @param {NonNullable<typeof InputController.prototype.target>} [target]
    */
   constructor(actionsToBind, target) {
     if (actionsToBind !== undefined) {
