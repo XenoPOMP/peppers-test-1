@@ -53,6 +53,37 @@ class InputObserver {
       justPressed: [],
     };
 
+    this.gamepad = {
+      buttonMap: [
+        'A',
+        'B',
+        'X',
+        'Y',
+        'LB',
+        'RB',
+        'LT',
+        'RT',
+        'Start',
+        'Menu',
+        'LS',
+        'RS',
+        'Up',
+        'Down',
+        'Left',
+        'Right',
+      ],
+      _previouslyPressed: [],
+      pressed: [],
+      justPressed: [],
+
+      _previouslyConnected: false,
+      connected: false,
+      justConnected: false,
+      justDisconnected: false,
+
+      axes: [0, 0, 0, 0],
+    };
+
     if (manualInit === true && manualInit !== undefined) {
       this.init('default');
       return this;
@@ -85,6 +116,17 @@ class InputObserver {
       if (this.updateType === 'always') {
         this.update();
       }
+    });
+
+    // Отслеживание подключения и отключения геймпада
+    addEventListener('gamepadconnected', () => {
+      this.gamepad.connected = true;
+      this.update();
+    });
+
+    addEventListener('gamepaddisconnected', () => {
+      this.gamepad.connected = false;
+      this.update();
     });
   }
 
