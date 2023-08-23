@@ -54,6 +54,16 @@ class InputObserver {
       justPressed: [],
     };
 
+    this.mouse = {
+      _buttonsToAdd: [],
+      _buttonsToRemove: [],
+      _previouslyPressed: [],
+      pressed: [],
+      justPressed: [],
+      x: 0,
+      y: 0,
+    };
+
     this.gamepad = {
       buttonMap: [
         'A',
@@ -103,31 +113,42 @@ class InputObserver {
   }
 
   init() {
-    addEventListener('keydown', event => {
-      this.keyboard._buttonsToAdd.push(event.keyCode);
-
+    const updateObserver = () => {
       if (this.updateType === 'always') {
         this.update();
       }
+    };
+
+    addEventListener('keydown', event => {
+      this.keyboard._buttonsToAdd.push(event.keyCode);
+      updateObserver();
     });
 
     addEventListener('keyup', event => {
       this.keyboard._buttonsToRemove.push(event.keyCode);
+      updateObserver();
+    });
 
-      if (this.updateType === 'always') {
-        this.update();
-      }
+    // Обрабатываем мышь
+    addEventListener('mousedown', event => {
+      this.mouse._buttonsToAdd.push(event.button);
+      updateObserver();
+    });
+
+    addEventListener('mouseup', event => {
+      this.mouse._buttonsToRemove.push(event.button);
+      updateObserver();
     });
 
     // Отслеживание подключения и отключения геймпада
     addEventListener('gamepadconnected', () => {
       this.gamepad.connected = true;
-      this.update();
+      updateObserver();
     });
 
     addEventListener('gamepaddisconnected', () => {
       this.gamepad.connected = false;
-      this.update();
+      updateObserver();
     });
   }
 
@@ -222,10 +243,27 @@ class InputObserver {
     if (this.keyboard.justPressed.length > 0) {
       this.lastActiveDevice = 'keyboard';
     }
+
+    if (this.mouse.justPressed.length > 0) {
+      this.lastActiveDevice = 'mouse';
+    }
+
+    if (!this.gamepad.connected) return;
+
+    let axesActive = false;
+
+    this.gamepad.axes.forEach(axis => {
+      if (Math.abs(axis) > 0.15) axesActive = true;
+    });
+
+    if (this.gamepad.justPressed.length > 0 || axesActive) {
+      this.lastActiveDevice = 'gamepad';
+    }
   }
 
   update() {
     this._processInputDevice(this.keyboard);
+    this._processInputDevice(this.mouse);
 
     this._processGamepadConnection();
 
@@ -239,8 +277,7 @@ class InputObserver {
 
     // DEBUG
     // console.log({
-    //   keyboard: this.keyboard,
-    //   gamepad: this.gamepad,
+    //   mouse: this.mouse,
     // });
   }
 }
