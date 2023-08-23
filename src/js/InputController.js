@@ -36,8 +36,8 @@ const remove = (array, predicate) => {
 
 // TODO: добавить поле update в пропсы
 class InputObserver {
-  /** @param {{manualInit?: boolean}} props */
-  constructor({ manualInit }) {
+  /** @param {{manualInit?: boolean, updateType?: 'onTick' | 'always'}} props */
+  constructor({ manualInit, updateType = 'always' }) {
     this.lastActiveDevice = undefined;
 
     this.keyboard = {
@@ -53,6 +53,9 @@ class InputObserver {
       return this;
     }
 
+    /** @type {typeof updateType} */
+    this.updateType = updateType;
+
     this.init('default');
   }
 
@@ -60,10 +63,18 @@ class InputObserver {
   init() {
     addEventListener('keydown', event => {
       this.keyboard._buttonsToAdd.push(event.keyCode);
+
+      if (this.updateType === 'always') {
+        this.update();
+      }
     });
 
     addEventListener('keyup', event => {
       this.keyboard._buttonsToRemove.push(event.keyCode);
+
+      if (this.updateType === 'always') {
+        this.update();
+      }
     });
   }
 
