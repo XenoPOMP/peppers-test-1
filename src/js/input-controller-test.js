@@ -43,7 +43,9 @@ const moveSquare = (stepsByX, stepsByY) => {
   reqSquare.style.translate = newTranslateStr;
 };
 
-const controller = new InputController({
+const controller = new InputController();
+
+controller.bindActions({
   left: {
     keys: [65, 1092],
     enabled: true,
@@ -76,7 +78,7 @@ const inlineData = () => {
     JSON.stringify(controller.actions, null, 2),
   ].join('\n');
 
-  // document.querySelector('#info-preview p').innerText = textToInsert;
+  document.querySelector('#info-preview p').innerText = textToInsert;
 };
 
 inlineData();
