@@ -1,6 +1,7 @@
 {
   "parser": "babel",
   "tabWidth": 2,
+  "trailingComma": "all",
   "singleQuote": true,
   "jsxSingleQuote": true,
   "semi": true,

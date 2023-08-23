@@ -1,3 +1,7 @@
+// TODO: Добавил игровой цикл
+// BUG: Без игрового цикла кнопка убирается из
+//      списка только следующего нажатия любой кнопки.
+
 /**
  * @param {string} groupName
  * @param {() => any} callback
@@ -23,7 +27,7 @@ const moveSquare = (stepsByX, stepsByY) => {
    */
   const reqSquare = document.querySelector('#redSquare');
   /** @type {number} */
-  const pixelsPerStep = 6;
+  const pixelsPerStep = 3;
 
   const translate =
     reqSquare.style.translate === '0px' ? '0px 0px' : reqSquare.style.translate;
@@ -39,30 +43,30 @@ const moveSquare = (stepsByX, stepsByY) => {
   reqSquare.style.translate = newTranslateStr;
 };
 
-const controller = new InputController({
+const controller = new InputController();
+
+controller.bindActions({
   left: {
-    keys: [97, 1092],
+    keys: [65, 1092],
     enabled: true,
-    callback: () => moveSquare(-1, 0),
+    onEvent: () => moveSquare(-1, 0),
   },
   bottom: {
-    keys: [115, 1099],
+    keys: [83, 1099],
     enabled: true,
-    callback: () => moveSquare(0, 1),
+    onEvent: () => moveSquare(0, 1),
   },
   right: {
-    keys: [100, 1074],
+    keys: [68, 1074],
     enabled: true,
-    callback: () => moveSquare(1, 0),
+    onEvent: () => moveSquare(1, 0),
   },
   top: {
-    keys: [119, 1094],
+    keys: [87, 1094],
     enabled: true,
-    callback: () => moveSquare(0, -1),
+    onEvent: () => moveSquare(0, -1),
   },
 });
-
-controller.attach(document, true);
 
 /** Выводим данные. */
 const inlineData = () => {
@@ -99,12 +103,12 @@ devButtons.detachButton.onclick = () => {
 };
 
 devButtons.activateButton.onclick = () => {
-  controller.activate();
+  controller.enabled = true;
   inlineData();
 };
 
 devButtons.deactivateButton.onclick = () => {
-  controller.deactivate();
+  controller.enabled = false;
   inlineData();
 };
 
@@ -113,13 +117,13 @@ devButtons.bindJumpButton.onclick = () => {
     jump: {
       keys: [32],
       enabled: true,
-      callback: () => {
+      activate: () => {
         /** @type {HTMLDivElement} */
         const reqSquare = document.querySelector('#redSquare');
 
         reqSquare.classList.add('jump');
       },
-      afterEvent: () => {
+      deactivate: () => {
         /** @type {HTMLDivElement} */
         const reqSquare = document.querySelector('#redSquare');
 
