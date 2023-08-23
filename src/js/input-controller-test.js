@@ -27,7 +27,7 @@ const moveSquare = (stepsByX, stepsByY) => {
    */
   const reqSquare = document.querySelector('#redSquare');
   /** @type {number} */
-  const pixelsPerStep = 1;
+  const pixelsPerStep = 3;
 
   const translate =
     reqSquare.style.translate === '0px' ? '0px 0px' : reqSquare.style.translate;
@@ -65,8 +65,6 @@ const controller = new InputController({
     onEvent: () => moveSquare(0, -1),
   },
 });
-
-controller.attach(document, true);
 
 /** Выводим данные. */
 const inlineData = () => {
