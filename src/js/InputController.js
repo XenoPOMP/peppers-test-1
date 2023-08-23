@@ -37,12 +37,13 @@ const remove = (array, predicate) => {
 // DONE: добавить поддержку геймпада
 // TODO: добавить поддержку мыыши
 class InputObserver {
-  /** @param {{manualInit?: boolean, updateType?: 'onTick' | 'always', autodetectDevice?: boolean, initialDevice?: 'keyboard' | 'mouse' | 'gamepad'}} props */
+  /** @param {{manualInit?: boolean, updateType?: 'onTick' | 'always', autodetectDevice?: boolean, initialDevice?: string, plugins?: ObserverPlugin[]}} props */
   constructor({
     manualInit,
     updateType = 'always',
     autodetectDevice = true,
     initialDevice = 'keyboard',
+    plugins,
   }) {
     this.lastActiveDevice = undefined;
 
@@ -104,52 +105,66 @@ class InputObserver {
     this.updateType = updateType;
     /** @type {typeof autodetectDevice} */
     this.autodetectDevice = autodetectDevice;
+    /** @type {typeof plugins} */
+    this.plugins = plugins;
 
     if (!this.autodetectDevice) {
       this.lastActiveDevice = initialDevice;
     }
 
     this.init('default');
+    this.initPlugins(plugins);
   }
 
-  init() {
-    const updateObserver = () => {
+  updateObserver() {
+    {
       if (this.updateType === 'always') {
         this.update();
       }
-    };
+    }
+  }
 
+  init() {
     addEventListener('keydown', event => {
       this.keyboard._buttonsToAdd.push(event.keyCode);
-      updateObserver();
+      this.updateObserver();
     });
 
     addEventListener('keyup', event => {
       this.keyboard._buttonsToRemove.push(event.keyCode);
-      updateObserver();
+      this.updateObserver();
     });
 
     // Обрабатываем мышь
     addEventListener('mousedown', event => {
       this.mouse._buttonsToAdd.push(event.button);
-      updateObserver();
+      this.updateObserver();
     });
 
     addEventListener('mouseup', event => {
       this.mouse._buttonsToRemove.push(event.button);
-      updateObserver();
+      this.updateObserver();
     });
 
     // Отслеживание подключения и отключения геймпада
     addEventListener('gamepadconnected', () => {
       this.gamepad.connected = true;
-      updateObserver();
+      this.updateObserver();
     });
 
     addEventListener('gamepaddisconnected', () => {
       this.gamepad.connected = false;
-      updateObserver();
+      this.updateObserver();
     });
+  }
+
+  initPlugins() {
+    if (this.plugins?.length === 0 || this.plugins === undefined) {
+      console.log('Didn`t found any plugin.');
+      return;
+    }
+
+    console.log(this.plugins);
   }
 
   _processInputDevice(inputDevice) {
@@ -265,6 +280,10 @@ class InputObserver {
     this._processInputDevice(this.keyboard);
     this._processInputDevice(this.mouse);
 
+    this.plugins?.map(plugin => {
+      this._processInputDevice(plugin.name);
+    });
+
     this._processGamepadConnection();
 
     if (this.gamepad.connected) {
@@ -282,11 +301,46 @@ class InputObserver {
   }
 }
 
+class ObserverPlugin {
+  /** @param {{name: PropertyKey}} props */
+  constructor(props) {
+    const { name } = props;
+
+    /** @type {string} */
+    this.name = name;
+  }
+
+  /**
+   * Этот метод будет вызываться при нажатии на кнопку.
+   *
+   * Сюда нужно поместить логику нажатия.
+   *
+   * @param {string} eventType                                                   тип отслеживаемого события (например, keydown).
+   * @param {(event: Event, observer: InputObserver) => any} callback            callback, который срабатывает в момент события.
+   */
+  onButtonDown(eventType, callback) {}
+
+  /**
+   * Этот метод будет вызываться при отжатии кнопки.
+   *
+   * Сюда нужно поместить логику отжатия.
+   *
+   * @param {string} eventType                                                   тип отслеживаемого события (например, keydown).
+   * @param {(event: Event, observer: InputObserver) => any} callback            callback, который срабатывает в момент события.
+   */
+  onButtonUp(eventType, callback) {}
+}
+
 class InputController {
   observer = new InputObserver({
     manualInit: false,
     updateType: 'always',
     autodetectDevice: true,
+    plugins: [
+      new ObserverPlugin({
+        name: 'dance-floor',
+      }),
+    ],
   });
 
   abortController = new AbortController();
