@@ -34,6 +34,7 @@ const remove = (array, predicate) => {
   return result;
 };
 
+// TODO: добавить новые виды ввода
 class InputObserver {
   /** @param {{manualInit?: boolean, updateType?: 'onTick' | 'always', autodetectDevice?: boolean, initialDevice?: 'keyboard'}} props */
   constructor({
