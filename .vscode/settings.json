@@ -24,5 +24,6 @@
         "foreground": "#000",
         "background": "#17E60F"
         }
-    }
+    },
+    "explorer.excludeGitIgnore": true
 }
