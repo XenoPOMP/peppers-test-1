@@ -141,6 +141,7 @@ class InputController {
     manualInit: false,
     updateType: 'always',
     autodetectDevice: false,
+    initialDevice: 'keyboard',
   });
 
   abortController = new AbortController();
