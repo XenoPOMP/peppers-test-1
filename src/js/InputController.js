@@ -97,6 +97,13 @@ class InputObserver {
     inputDevice._buttonsToRemove = [];
 
     removalDelay.forEach(button => inputDevice._buttonsToRemove.push(button));
+
+    // DEBUG
+    document.querySelector('#info-preview p').innerText = JSON.stringify(
+      this.keyboard,
+      null,
+      2,
+    );
   }
 
   _setLastActiveDevice() {
@@ -109,8 +116,6 @@ class InputObserver {
     this._processInputDevice(this.keyboard);
 
     this._setLastActiveDevice();
-
-    console.log(this.keyboard);
   }
 }
 

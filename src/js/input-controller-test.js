@@ -76,7 +76,7 @@ const inlineData = () => {
     JSON.stringify(controller.actions, null, 2),
   ].join('\n');
 
-  document.querySelector('#info-preview p').innerText = textToInsert;
+  // document.querySelector('#info-preview p').innerText = textToInsert;
 };
 
 inlineData();
