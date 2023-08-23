@@ -109,13 +109,6 @@ class InputObserver {
     inputDevice._buttonsToRemove = [];
 
     removalDelay.forEach(button => inputDevice._buttonsToRemove.push(button));
-
-    // DEBUG
-    document.querySelector('#info-preview p').innerText = JSON.stringify(
-      this.keyboard,
-      null,
-      2,
-    );
   }
 
   _setLastActiveDevice() {
@@ -189,16 +182,19 @@ class InputController {
   }
 
   // DONE: реализовать bindActions
+  /** @param {typeof InputController.prototype.actions} actionsToBind */
   bindActions(actionsToBind) {
     this.actions = { ...this.actions, ...actionsToBind };
   }
 
   // DONE: реализовать enableAction
+  /** @param {string} actionName */
   enableAction(actionName) {
     this.actions[actionName].enabled = true;
   }
 
   // DONE: реализовать disableAction
+  /** @param {string} actionName */
   disableAction(actionName) {
     this.actions[actionName].enabled = false;
   }
