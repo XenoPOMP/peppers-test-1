@@ -36,7 +36,7 @@ const remove = (array, predicate) => {
 
 // TODO: добавить новые виды ввода
 class InputObserver {
-  /** @param {{manualInit?: boolean, updateType?: 'onTick' | 'always', autodetectDevice?: boolean, initialDevice?: 'keyboard'}} props */
+  /** @param {{manualInit?: boolean, updateType?: 'onTick' | 'always', autodetectDevice?: boolean, initialDevice?: 'keyboard' | 'mouse' | 'gamepad'}} props */
   constructor({
     manualInit,
     updateType = 'always',
