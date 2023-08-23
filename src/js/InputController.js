@@ -203,6 +203,13 @@ class InputController {
         `You\`re trying to check action\`s status which doesn\`t exist (${action}).`,
       );
     }
+
+    /**
+     * @param {{ keys: number[], enabled?: boolean }} action    объект с экшеном.
+     */
+    const hasActiveKey = action => {};
+
+    return actionExists;
   }
 
   // DONE: реализовать isKeyPressed
