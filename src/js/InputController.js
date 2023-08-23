@@ -302,12 +302,16 @@ class InputObserver {
 }
 
 class ObserverPlugin {
-  /** @param {{name: PropertyKey}} props */
+  /**
+   * @param {{name: PropertyKey, observer: InputObserver}} props
+   */
   constructor(props) {
-    const { name } = props;
+    const { name, observer } = props;
 
     /** @type {string} */
     this.name = name;
+    /** @type {InputObserver} */
+    this.observer = observer;
   }
 
   /**
@@ -315,23 +319,31 @@ class ObserverPlugin {
    *
    * Сюда нужно поместить логику нажатия.
    *
-   * @param {string} eventType                                                   тип отслеживаемого события (например, keydown).
-   * @param {(event: Event, observer: InputObserver) => any} callback            callback, который срабатывает в момент события.
+   * @param {string} [eventType]  тип отслеживаемого события (например, keydown).
    */
-  onButtonDown(eventType, callback) {}
+  onButtonDown(eventType) {}
 
   /**
    * Этот метод будет вызываться при отжатии кнопки.
    *
    * Сюда нужно поместить логику отжатия.
    *
-   * @param {string} eventType                                                   тип отслеживаемого события (например, keydown).
-   * @param {(event: Event, observer: InputObserver) => any} callback            callback, который срабатывает в момент события.
+   * @param {string} [eventType]  тип отслеживаемого события (например, keydown).
    */
-  onButtonUp(eventType, callback) {}
+  onButtonUp(eventType) {}
 }
 
-class MousePlugin extends ObserverPlugin {}
+class MousePlugin extends ObserverPlugin {
+  /** @param {InputObserver} observer */
+  constructor(observer) {
+    super({
+      name: 'mouse',
+      observer,
+    });
+  }
+
+  onButtonDown(eventType = 'mouse') {}
+}
 
 class InputController {
   observer = new InputObserver({
