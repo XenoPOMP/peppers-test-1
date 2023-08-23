@@ -67,7 +67,7 @@ controller.bindActions({
     onEvent: () => moveSquare(0, -1),
   },
   lmb: {
-    keys: [0],
+    keys: [1],
     enabled: true,
     onEvent: () => {
       alert('Вы нажали левую кнопку мыши.');
@@ -100,7 +100,7 @@ const devButtons = {
 };
 
 devButtons.attachButton.onclick = () => {
-  controller.attach(window);
+  controller.attach(document);
   inlineData();
 };
 
