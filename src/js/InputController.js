@@ -134,7 +134,7 @@ class InputController {
    */
   constructor(actionsToBind, target) {
     if (actionsToBind !== undefined) {
-      this.bindActions();
+      this.bindActions(actionsToBind);
     }
 
     if (target !== undefined) {
@@ -207,11 +207,13 @@ class InputController {
     /**
      * @param {typeof targetAction} action    объект с экшеном.
      */
-    const hasActiveKey = action => {};
+    const hasActiveKey = action => {
+      const { keys } = action;
 
-    console.log(hasActiveKey(targetAction));
+      return keys.find(key => this.isKeyPressed(key)) !== undefined;
+    };
 
-    return actionExists;
+    return actionExists && hasActiveKey(targetAction);
   }
 
   // DONE: реализовать isKeyPressed
