@@ -103,12 +103,12 @@ devButtons.detachButton.onclick = () => {
 };
 
 devButtons.activateButton.onclick = () => {
-  controller.activateController();
+  controller.enabled = true;
   inlineData();
 };
 
 devButtons.deactivateButton.onclick = () => {
-  controller.deactivateController();
+  controller.enabled = false;
   inlineData();
 };
 
