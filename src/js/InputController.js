@@ -192,7 +192,7 @@ class InputController {
     this.target = null;
   }
 
-  // TODO: реализовать isActionActive
+  // DONE: реализовать isActionActive
   /** @param {string} action */
   isActionActive(action) {
     const targetAction = this.actions[action];
