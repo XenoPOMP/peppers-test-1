@@ -68,6 +68,7 @@ class InputObserver {
   }
 
   _processInputDevice(inputDevice) {
+    // FIX (потенциально): заменить функцию cloneDeep
     inputDevice._previouslyPressed = cloneDeep(inputDevice.pressed);
 
     inputDevice._buttonsToAdd.forEach(buttonToAdd => {
