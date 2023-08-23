@@ -235,6 +235,12 @@ class InputObserver {
     if (this.autodetectDevice) {
       this._setLastActiveDevice();
     }
+
+    // DEBUG
+    // console.log({
+    //   keyboard: this.keyboard,
+    //   gamepad: this.gamepad,
+    // });
   }
 }
 
