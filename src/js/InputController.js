@@ -35,8 +35,8 @@ const remove = (array, predicate) => {
 };
 
 class InputObserver {
-  /** @param {{manualInit?: boolean, updateType?: 'onTick' | 'always'}} props */
-  constructor({ manualInit, updateType = 'always' }) {
+  /** @param {{manualInit?: boolean, updateType?: 'onTick' | 'always', autodetectDevice?: boolean}} props */
+  constructor({ manualInit, updateType = 'always', autodetectDevice = true }) {
     this.lastActiveDevice = undefined;
 
     this.keyboard = {
@@ -54,6 +54,8 @@ class InputObserver {
 
     /** @type {typeof updateType} */
     this.updateType = updateType;
+    /** @type {typeof autodetectDevice} */
+    this.autodetectDevice = autodetectDevice;
 
     this.init('default');
   }
@@ -118,7 +120,9 @@ class InputObserver {
   update() {
     this._processInputDevice(this.keyboard);
 
-    this._setLastActiveDevice();
+    if (this.autodetectDevice) {
+      this._setLastActiveDevice();
+    }
   }
 }
 
