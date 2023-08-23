@@ -119,7 +119,7 @@ class InputController {
 
   enabled = false;
 
-  /** @type {Record<string, { keys: number[], enabled?: boolean }>} */
+  /** @type {Record<string, { keys: number[], enabled?: boolean, onEvent?: () => any, afterEvent?: () => any }>} */
   actions = {};
   /** @type {HTMLElement|Document|Window|null} */
   target = null;
@@ -143,10 +143,18 @@ class InputController {
 
     addEventListener('keydown', () => {
       this.observer.update();
+
+      if (this.target !== null && this.target !== undefined) {
+        this.target.dispatchEvent(new Event(this.ACTION_ACTIVATED));
+      }
     });
 
     addEventListener('keyup', () => {
       this.observer.update();
+
+      if (this.target !== null && this.target !== undefined) {
+        this.target.dispatchEvent(new Event(this.ACTION_DEACTIVATED));
+      }
     });
   }
 
@@ -167,7 +175,6 @@ class InputController {
 
   // TODO: реализовать attach
   /**
-   *
    * @param {NonNullable<typeof InputController.prototype.target>} target
    * @param {boolean} [dontEbable]
    */
@@ -178,11 +185,11 @@ class InputController {
     this.abortController = new AbortController();
 
     this.target.addEventListener(this.ACTION_ACTIVATED, () => {
-      console.log('Activation event emitted!');
+      this.onEvent('keypress');
     });
 
     this.target.addEventListener(this.ACTION_DEACTIVATED, () => {
-      console.log('Deactivation event emitted!');
+      this.onEvent('keyup');
     });
   }
 
@@ -190,6 +197,33 @@ class InputController {
   detach() {
     this.abortController.abort();
     this.target = null;
+  }
+
+  // DONE: реализовать метод onEvent
+  /** @param {'keypress'|'keyup'} eventType */
+  onEvent(eventType) {
+    const actionNames = Object.keys(this.actions);
+
+    const activeActionsNames = actionNames.filter(name =>
+      this.isActionActive(name),
+    );
+
+    activeActionsNames.map(activeActionName => {
+      const { onEvent, afterEvent } = this.actions[activeActionName];
+
+      switch (eventType) {
+        case 'keypress': {
+          if (onEvent !== undefined) {
+            onEvent();
+          }
+        }
+        case 'keyup': {
+          if (afterEvent !== undefined) {
+            afterEvent();
+          }
+        }
+      }
+    });
   }
 
   // DONE: реализовать isActionActive
