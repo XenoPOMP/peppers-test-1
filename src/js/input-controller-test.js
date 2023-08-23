@@ -74,7 +74,7 @@ controller.bindActions({
     },
   },
   rmb: {
-    keys: [1],
+    keys: [2],
     enabled: true,
     onEvent: () => {
       console.log('Вы нажали правую кнопку мыши.');
