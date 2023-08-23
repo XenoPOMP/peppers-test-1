@@ -185,10 +185,10 @@ class InputController {
   // DONE: реализовать attach
   /**
    * @param {NonNullable<typeof InputController.prototype.target>} target
-   * @param {boolean} [dontEbable]
+   * @param {boolean} [dontEnable]
    */
-  attach(target, dontEbable = false) {
-    this.enabled = !dontEbable;
+  attach(target, dontEnable = false) {
+    this.enabled = !dontEnable;
     this.target = target;
 
     this.abortController = new AbortController();
