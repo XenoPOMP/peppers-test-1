@@ -34,7 +34,7 @@ const remove = (array, predicate) => {
   return result;
 };
 
-// TODO: добавить поле update в пропсы
+// DONE: добавить поле update в пропсы
 class InputObserver {
   /** @param {{manualInit?: boolean, updateType?: 'onTick' | 'always'}} props */
   constructor({ manualInit, updateType = 'always' }) {
@@ -59,7 +59,7 @@ class InputObserver {
     this.init('default');
   }
 
-  // TODO: реализовать выбор типа обновления (при тике или всегда)
+  // DONE: реализовать выбор типа обновления (при тике или всегда)
   init() {
     addEventListener('keydown', event => {
       this.keyboard._buttonsToAdd.push(event.keyCode);
