@@ -155,7 +155,7 @@ class InputController {
       this.target = target;
     }
 
-    // TODO: добавить условие для диспатча ивента
+    // DONE: добавить условие для диспатча ивента
     addEventListener('keydown', () => {
       this.observer.update();
 
