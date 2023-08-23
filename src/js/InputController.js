@@ -78,7 +78,10 @@ class InputObserver {
 
     inputDevice._buttonsToRemove.forEach(buttonToRemove => {
       if (!inputDevice._buttonsToAdd.includes(buttonToRemove)) {
-        remove(inputDevice.pressed, button => button === buttonToRemove);
+        inputDevice.pressed = remove(
+          inputDevice.pressed,
+          button => button === buttonToRemove,
+        );
       } else {
         removalDelay.push(buttonToRemove);
       }
@@ -112,31 +115,52 @@ class InputController {
     manualInit: false,
   });
 
-  constructor() {
-    const displayClass = () => {
-      document.querySelector('article#info-preview pre p').innerText =
-        JSON.stringify(
-          {
-            justPressed: this.observer.keyboard.justPressed,
-            pressed: this.observer.keyboard.pressed,
-            _buttonsToAdd: this.observer.keyboard._buttonsToAdd,
-            _buttonsToRemove: this.observer.keyboard._buttonsToRemove,
-            _previouslyPressed: this.observer.keyboard._previouslyPressed,
-            lastActiveDevice: this.observer.keyboard.lastActiveDevice,
-          },
-          null,
-          2,
-        );
-    };
+  /** @type {Record<string, { keys: number[], enabled?: boolean }>} */
+  actions = {};
+  target = null;
+
+  constructor(actionsToBind, target) {
+    if (actionsToBind !== undefined) {
+      this.bindActions();
+    }
+
+    if (target !== undefined) {
+      this.target = target;
+    }
 
     addEventListener('keydown', () => {
       this.observer.update();
-      displayClass();
     });
 
     addEventListener('keyup', () => {
       this.observer.update();
-      displayClass();
     });
   }
+
+  // DONE: реализовать enableAction
+  bindActions(actionsToBind) {
+    this.actions = { ...this.actions, ...actionsToBind };
+  }
+
+  // DONE: реализовать enableAction
+  enableAction(actionName) {
+    this.actions[actionName].enabled = true;
+  }
+
+  // TODO: реализовать disableAction
+  disableAction(actionName) {
+    this.actions[actionName].enabled = false;
+  }
+
+  // TODO: реализовать attach
+  attach() {}
+
+  // TODO: реализовать detach
+  detach() {}
+
+  // TODO: реализовать detach
+  isActionActive() {}
+
+  // TODO: реализовать isKeyPressed
+  isKeyPressed() {}
 }
