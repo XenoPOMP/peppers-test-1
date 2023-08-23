@@ -34,7 +34,6 @@ const remove = (array, predicate) => {
   return result;
 };
 
-// DONE: добавить поле update в пропсы
 class InputObserver {
   /** @param {{manualInit?: boolean, updateType?: 'onTick' | 'always'}} props */
   constructor({ manualInit, updateType = 'always' }) {
@@ -59,7 +58,6 @@ class InputObserver {
     this.init('default');
   }
 
-  // DONE: реализовать выбор типа обновления (при тике или всегда)
   init() {
     addEventListener('keydown', event => {
       this.keyboard._buttonsToAdd.push(event.keyCode);
@@ -155,7 +153,6 @@ class InputController {
       this.target = target;
     }
 
-    // DONE: добавить условие для диспатча ивента
     addEventListener('keydown', () => {
       this.observer.update();
 
@@ -181,25 +178,21 @@ class InputController {
     });
   }
 
-  // DONE: реализовать bindActions
   /** @param {typeof InputController.prototype.actions} actionsToBind */
   bindActions(actionsToBind) {
     this.actions = { ...this.actions, ...actionsToBind };
   }
 
-  // DONE: реализовать enableAction
   /** @param {string} actionName */
   enableAction(actionName) {
     this.actions[actionName].enabled = true;
   }
 
-  // DONE: реализовать disableAction
   /** @param {string} actionName */
   disableAction(actionName) {
     this.actions[actionName].enabled = false;
   }
 
-  // DONE: реализовать attach
   /**
    * @param {NonNullable<typeof InputController.prototype.target>} target
    * @param {boolean} [dontEnable]
@@ -219,13 +212,11 @@ class InputController {
     });
   }
 
-  // DONE: реализовать detach
   detach() {
     this.abortController.abort();
     this.target = null;
   }
 
-  // DONE: реализовать метод onEvent
   /** @param {'keypress'|'keyup'} eventType */
   onEvent(eventType) {
     const actionNames = Object.keys(this.actions);
@@ -252,7 +243,6 @@ class InputController {
     });
   }
 
-  // DONE: реализовать isActionActive
   /** @param {string} action */
   isActionActive(action) {
     const targetAction = this.actions[action];
@@ -276,7 +266,6 @@ class InputController {
     return actionExists && hasActiveKey(targetAction);
   }
 
-  // DONE: реализовать isAnyActionActive
   isAnyActionActive() {
     const actionNames = Object.keys(this.actions);
 
@@ -289,7 +278,6 @@ class InputController {
     return result !== undefined;
   }
 
-  // DONE: реализовать isKeyPressed
   /**
    * @param {number} keyCode
    *
