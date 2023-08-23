@@ -35,7 +35,7 @@ const remove = (array, predicate) => {
 };
 
 // DONE: добавить поддержку геймпада
-// TODO: добавить поддержку мыыши
+// DONE: добавить поддержку мыши
 class InputObserver {
   /** @param {{manualInit?: boolean, updateType?: 'onTick' | 'always', autodetectDevice?: boolean, initialDevice?: string, plugins?: ObserverPlugin[]}} props */
   constructor({
@@ -330,6 +330,8 @@ class ObserverPlugin {
    */
   onButtonUp(eventType, callback) {}
 }
+
+class MousePlugin extends ObserverPlugin {}
 
 class InputController {
   observer = new InputObserver({
