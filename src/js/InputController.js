@@ -37,13 +37,12 @@ const remove = (array, predicate) => {
 // DONE: добавить поддержку геймпада
 // DONE: добавить поддержку мыши
 class InputObserver {
-  /** @param {{manualInit?: boolean, updateType?: 'onTick' | 'always', autodetectDevice?: boolean, initialDevice?: string, plugins?: ObserverPlugin[]}} props */
+  /** @param {{manualInit?: boolean, updateType?: 'onTick' | 'always', autodetectDevice?: boolean, initialDevice?: string}} props */
   constructor({
     manualInit,
     updateType = 'always',
     autodetectDevice = true,
     initialDevice = 'keyboard',
-    plugins,
   }) {
     this.lastActiveDevice = undefined;
 
@@ -105,15 +104,13 @@ class InputObserver {
     this.updateType = updateType;
     /** @type {typeof autodetectDevice} */
     this.autodetectDevice = autodetectDevice;
-    /** @type {typeof plugins} */
-    this.plugins = plugins;
 
     if (!this.autodetectDevice) {
       this.lastActiveDevice = initialDevice;
     }
 
     this.init('default');
-    this.initPlugins(plugins);
+    // this.initPlugins();
   }
 
   updateObserver() {
@@ -125,27 +122,6 @@ class InputObserver {
   }
 
   init() {
-    addEventListener('keydown', event => {
-      this.keyboard._buttonsToAdd.push(event.keyCode);
-      this.updateObserver();
-    });
-
-    addEventListener('keyup', event => {
-      this.keyboard._buttonsToRemove.push(event.keyCode);
-      this.updateObserver();
-    });
-
-    // Обрабатываем мышь
-    addEventListener('mousedown', event => {
-      this.mouse._buttonsToAdd.push(event.button);
-      this.updateObserver();
-    });
-
-    addEventListener('mouseup', event => {
-      this.mouse._buttonsToRemove.push(event.button);
-      this.updateObserver();
-    });
-
     // Отслеживание подключения и отключения геймпада
     addEventListener('gamepadconnected', () => {
       this.gamepad.connected = true;
@@ -158,13 +134,14 @@ class InputObserver {
     });
   }
 
-  initPlugins() {
-    if (this.plugins?.length === 0 || this.plugins === undefined) {
+  /** @param {ObserverPlugin[]} [plugins] */
+  initPlugins(plugins) {
+    if (plugins?.length === 0 || plugins === undefined) {
       console.log('Didn`t found any plugin.');
       return;
     }
 
-    console.log(this.plugins);
+    plugins.map(plugin => plugin.init());
   }
 
   _processInputDevice(inputDevice) {
@@ -302,8 +279,15 @@ class InputObserver {
 }
 
 class ObserverPlugin {
+  /** @type {{ onButtonPress: string, onButtonUp: string, keyCodeName: string }} */
+  eventTypes = {
+    onButtonPress: 'keydown',
+    onButtonUp: 'keyup',
+    keyCodeName: 'keyCode',
+  };
+
   /**
-   * @param {{name: PropertyKey, observer: InputObserver, eventTypes?: { onButtonPress: string, onButtonUp: string }}} props
+   * @param {{name: PropertyKey, observer: InputObserver, eventTypes: { onButtonPress: string, onButtonUp: string, keyCodeName: string }}} props
    */
   constructor(props) {
     const { name, observer, eventTypes } = props;
@@ -320,19 +304,35 @@ class ObserverPlugin {
    * Этот метод будет вызываться при нажатии на кнопку.
    *
    * Сюда нужно поместить логику нажатия.
-   *
-   * @param {string} [eventType]  тип отслеживаемого события (например, keydown).
    */
-  onButtonDown(eventType) {}
+  init() {
+    addEventListener(this.eventTypes?.onButtonPress ?? '', event => {
+      this.observer[this.name]._buttonsToAdd.push(
+        event[this.eventTypes.keyCodeName],
+      );
+      this.observer.updateObserver();
+    });
 
-  /**
-   * Этот метод будет вызываться при отжатии кнопки.
-   *
-   * Сюда нужно поместить логику отжатия.
-   *
-   * @param {string} [eventType]  тип отслеживаемого события (например, keydown).
-   */
-  onButtonUp(eventType) {}
+    addEventListener(this.eventTypes?.onButtonUp ?? '', event => {
+      this.observer[this.name]._buttonsToRemove.push(event.keyCode);
+      this.observer.updateObserver();
+    });
+  }
+}
+
+class KeyboardPlugin extends ObserverPlugin {
+  /** @param {InputObserver} observer */
+  constructor(observer) {
+    super({
+      name: 'keyboard',
+      observer,
+      eventTypes: {
+        onButtonPress: 'keydown',
+        onButtonUp: 'keyup',
+        keyCodeName: 'keyCode',
+      },
+    });
+  }
 }
 
 class MousePlugin extends ObserverPlugin {
@@ -341,10 +341,13 @@ class MousePlugin extends ObserverPlugin {
     super({
       name: 'mouse',
       observer,
+      eventTypes: {
+        onButtonPress: 'mousedown',
+        onButtonUp: 'mouseup',
+        keyCodeName: 'button',
+      },
     });
   }
-
-  onButtonDown(eventType = 'mouse') {}
 }
 
 class InputController {
@@ -352,11 +355,6 @@ class InputController {
     manualInit: false,
     updateType: 'always',
     autodetectDevice: true,
-    plugins: [
-      new ObserverPlugin({
-        name: 'dance-floor',
-      }),
-    ],
   });
 
   abortController = new AbortController();
@@ -371,6 +369,11 @@ class InputController {
   // КОНСТАНТЫ
   ACTION_ACTIVATED = 'input-controller:action-activated';
   ACTION_DEACTIVATED = 'input-controller:action-deactivated';
+  /** @type {ObserverPlugin[]} */
+  PLUGIN_LIST = [
+    new KeyboardPlugin(this.observer),
+    new MousePlugin(this.observer),
+  ];
 
   /**
    * @param {typeof InputController.prototype.actions} [actionsToBind]
@@ -408,6 +411,9 @@ class InputController {
         this.target.dispatchEvent(new Event(this.ACTION_DEACTIVATED));
       }
     };
+
+    // ИНИЦИАЛИЗАЦИЯ ПЛАГИНОВ
+    this.observer.initPlugins(this.PLUGIN_LIST);
 
     addEventListener('keydown', () => activateAction());
     addEventListener('mousedown', () => activateAction());
@@ -475,11 +481,15 @@ class InputController {
           if (onEvent !== undefined) {
             onEvent();
           }
+
+          break;
         }
         case 'keyup': {
           if (afterEvent !== undefined) {
             afterEvent();
           }
+
+          break;
         }
       }
     });
