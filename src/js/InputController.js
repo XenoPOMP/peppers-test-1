@@ -115,6 +115,10 @@ class InputController {
     manualInit: false,
   });
 
+  abortController = new AbortController();
+
+  enabled = false;
+
   /** @type {Record<string, { keys: number[], enabled?: boolean }>} */
   actions = {};
   target = null;
@@ -137,7 +141,7 @@ class InputController {
     });
   }
 
-  // DONE: реализовать enableAction
+  // DONE: реализовать bindActions
   bindActions(actionsToBind) {
     this.actions = { ...this.actions, ...actionsToBind };
   }
@@ -147,20 +151,51 @@ class InputController {
     this.actions[actionName].enabled = true;
   }
 
-  // TODO: реализовать disableAction
+  // DONE: реализовать disableAction
   disableAction(actionName) {
     this.actions[actionName].enabled = false;
   }
 
   // TODO: реализовать attach
-  attach() {}
+  /**
+   *
+   * @param {HTMLElement|Document|Window} target
+   * @param {boolean} [dontEbable]
+   */
+  attach(target, dontEbable = false) {
+    this.enabled = !dontEbable;
+    this.target = target;
 
-  // TODO: реализовать detach
-  detach() {}
+    this.abortController = new AbortController();
+  }
 
-  // TODO: реализовать detach
-  isActionActive() {}
+  // DONE: реализовать detach
+  detach() {
+    this.abortController.abort();
+    this.target = null;
+  }
 
-  // TODO: реализовать isKeyPressed
-  isKeyPressed() {}
+  // TODO: реализовать isActionActive
+  /** @param {string} action */
+  isActionActive(action) {
+    const actionExists = action in this.actions;
+
+    if (!actionExists) {
+      throw new Error(
+        'You`re trying to check action`s status which doesn`t exist.',
+      );
+    }
+  }
+
+  // DONE: реализовать isKeyPressed
+  /**
+   * @param {number} keyCode
+   *
+   * @returns {boolean}
+   */
+  isKeyPressed(keyCode) {
+    const currentDevice = this.observer.lastActiveDevice ?? 'keyboard';
+
+    return this.observer[currentDevice].pressed.includes(keyCode);
+  }
 }
