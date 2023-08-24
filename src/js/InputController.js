@@ -351,12 +351,12 @@ class ObserverPlugin {
     addEventListener(this.eventTypes?.onButtonPress ?? '', event => {
       const { _previouslyPressed, pressed } = this.observer[this.name];
 
+      actions?.activation();
+
       this.observer[this.name]._buttonsToAdd.push(
         event[this.eventTypes.keyCodeName],
       );
       this.observer.updateObserver();
-
-      actions?.activation();
     });
 
     addEventListener(this.eventTypes?.onButtonUp ?? '', event => {
@@ -445,7 +445,7 @@ class InputController {
       //   anyAction: this.isAnyActionActive(),
       // });
 
-      if (!this.isAnyActionActive()) {
+      if (this.isAnyActionActive()) {
         return;
       }
 
