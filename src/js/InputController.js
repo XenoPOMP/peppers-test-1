@@ -457,7 +457,11 @@ class InputController {
     };
 
     const deactivateAction = () => {
-      if (this.target !== null && this.target !== undefined) {
+      if (
+        this.target !== null &&
+        this.target !== undefined &&
+        this.isAnyActionActive()
+      ) {
         this.target.dispatchEvent(new Event(this.ACTION_DEACTIVATED));
       }
     };
