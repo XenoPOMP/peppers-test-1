@@ -113,15 +113,18 @@ class InputObserver {
     });
   }
 
-  /** @param {ObserverPlugin[]} [plugins] */
-  initPlugins(plugins) {
+  /**
+   * @param {ObserverPlugin[]} [plugins]
+   * @param {{activation: () => any, deactivation: () => any}} [actions]
+   */
+  initPlugins(plugins, actions) {
     if (plugins?.length === 0 || plugins === undefined) {
       console.log('Didn`t found any plugin.');
       return;
     }
 
     plugins.forEach(plugin => {
-      plugin.init();
+      plugin.init(actions);
 
       this[plugin.name] = {
         _buttonsToAdd: [],
@@ -320,18 +323,25 @@ class ObserverPlugin {
    * Этот метод будет вызываться при нажатии на кнопку.
    *
    * Сюда нужно поместить логику нажатия.
+   * @param {{activation: () => any, deactivation: () => any}} [actions]
    */
-  init() {
+  init(actions) {
+    console.log(actions);
+
     addEventListener(this.eventTypes?.onButtonPress ?? '', event => {
       this.observer[this.name]._buttonsToAdd.push(
         event[this.eventTypes.keyCodeName],
       );
       this.observer.updateObserver();
+
+      actions?.activation();
     });
 
     addEventListener(this.eventTypes?.onButtonUp ?? '', event => {
       this.observer[this.name]._buttonsToRemove.push(event.keyCode);
       this.observer.updateObserver();
+
+      actions?.deactivation();
     });
   }
 }
@@ -429,13 +439,10 @@ class InputController {
     };
 
     // ИНИЦИАЛИЗАЦИЯ ПЛАГИНОВ
-    this.observer.initPlugins(this.PLUGIN_LIST);
-
-    addEventListener('keydown', () => activateAction());
-    addEventListener('mousedown', () => activateAction());
-
-    addEventListener('keyup', () => deactivateAction());
-    addEventListener('mouseup', () => deactivateAction());
+    this.observer.initPlugins(this.PLUGIN_LIST, {
+      activation: activateAction,
+      deactivation: deactivateAction,
+    });
   }
 
   /** @param {typeof InputController.prototype.actions} actionsToBind */
