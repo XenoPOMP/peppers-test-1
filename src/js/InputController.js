@@ -174,7 +174,11 @@ class InputObserver {
           button => button === buttonToRemove,
         );
 
-        if (arraysEqual(inputDevice.pressed, inputDevice._previouslyPressed)) {
+        if (
+          arraysEqual(inputDevice.pressed, inputDevice._previouslyPressed) &&
+          inputDevice._previouslyPressed.length > 0 &&
+          inputDevice.pressed.length > 0
+        ) {
           inputDevice.pressed = [inputDevice.pressed.at(-1)];
         }
       } else {
