@@ -86,16 +86,16 @@ controller.bindActions({
       controller.enableAction('bottom');
     },
   },
-  lmb: {
-    keys: [0],
-    enabled: true,
-    onEvent: () => {
-      console.log('Вы нажали левую кнопку мыши.');
-    },
-    afterEvent: () => {
-      console.log('Вы отжали левую кнопку мыши');
-    },
-  },
+  // lmb: {
+  //   keys: [0],
+  //   enabled: true,
+  //   onEvent: () => {
+  //     console.log('Вы нажали левую кнопку мыши.');
+  //   },
+  //   afterEvent: () => {
+  //     console.log('Вы отжали левую кнопку мыши');
+  //   },
+  // },
   rmb: {
     keys: [2],
     enabled: true,
