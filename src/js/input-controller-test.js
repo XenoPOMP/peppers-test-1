@@ -45,22 +45,25 @@ controller.bindActions({
   left: {
     keys: [65, 1092],
     enabled: true,
-    onEvent: () => moveSquare(-1, 0),
+    onEvent: () => {
+      moveSquare(-10, 0);
+      // console.log('Moving to the left');
+    },
   },
   bottom: {
     keys: [83, 1099],
     enabled: true,
-    onEvent: () => moveSquare(0, 1),
+    onEvent: () => moveSquare(0, 10),
   },
   right: {
     keys: [68, 1074],
     enabled: true,
-    onEvent: () => moveSquare(1, 0),
+    onEvent: () => moveSquare(10, 0),
   },
   top: {
     keys: [87, 1094],
     enabled: true,
-    onEvent: () => moveSquare(0, -1),
+    onEvent: () => moveSquare(0, -10),
   },
   lmb: {
     keys: [0],
