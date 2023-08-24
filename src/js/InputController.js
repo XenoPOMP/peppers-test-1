@@ -34,8 +34,6 @@ const remove = (array, predicate) => {
   return result;
 };
 
-// DONE: добавить поддержку геймпада
-// DONE: добавить поддержку мыши
 class InputObserver {
   /** @param {{manualInit?: boolean, updateType?: 'onTick' | 'always', autodetectDevice?: boolean, initialDevice?: string}} props */
   constructor({
@@ -45,24 +43,6 @@ class InputObserver {
     initialDevice = 'keyboard',
   }) {
     this.lastActiveDevice = undefined;
-
-    this.keyboard = {
-      _buttonsToAdd: [],
-      _buttonsToRemove: [],
-      _previouslyPressed: [],
-      pressed: [],
-      justPressed: [],
-    };
-
-    this.mouse = {
-      _buttonsToAdd: [],
-      _buttonsToRemove: [],
-      _previouslyPressed: [],
-      pressed: [],
-      justPressed: [],
-      x: 0,
-      y: 0,
-    };
 
     this.gamepad = {
       buttonMap: [
@@ -110,7 +90,6 @@ class InputObserver {
     }
 
     this.init('default');
-    // this.initPlugins();
   }
 
   updateObserver() {
@@ -141,12 +120,25 @@ class InputObserver {
       return;
     }
 
-    plugins.map(plugin => plugin.init());
+    plugins.forEach(plugin => {
+      plugin.init();
+
+      this[plugin.name] = {
+        _buttonsToAdd: [],
+        _buttonsToRemove: [],
+        _previouslyPressed: [],
+        pressed: [],
+        justPressed: [],
+      };
+    });
+
+    this.plugins = plugins;
+
+    console.log(this);
   }
 
   _processInputDevice(inputDevice) {
-    // FIX (потенциально): заменить функцию cloneDeep
-    inputDevice._previouslyPressed = cloneDeep(inputDevice.pressed);
+    inputDevice._previouslyPressed = [...(inputDevice.pressed ?? [])];
 
     inputDevice._buttonsToAdd.forEach(buttonToAdd => {
       if (!inputDevice.pressed.includes(buttonToAdd)) {
@@ -240,6 +232,18 @@ class InputObserver {
       this.lastActiveDevice = 'mouse';
     }
 
+    if (this.plugins !== undefined) {
+      const deviceNames = this.plugins.map(plugin => plugin.name);
+
+      deviceNames.forEach(name => {
+        const isJustPressed = this[name].justPressed.length > 0;
+
+        if (isJustPressed) {
+          this.lastActiveDevice = name;
+        }
+      });
+    }
+
     if (!this.gamepad.connected) return;
 
     let axesActive = false;
@@ -254,11 +258,8 @@ class InputObserver {
   }
 
   update() {
-    this._processInputDevice(this.keyboard);
-    this._processInputDevice(this.mouse);
-
     this.plugins?.map(plugin => {
-      this._processInputDevice(plugin.name);
+      this._processInputDevice(this[plugin.name]);
     });
 
     this._processGamepadConnection();
@@ -270,14 +271,29 @@ class InputObserver {
     if (this.autodetectDevice) {
       this._setLastActiveDevice();
     }
-
-    // DEBUG
-    // console.log({
-    //   mouse: this.mouse,
-    // });
   }
 }
 
+/**
+ * Этот класс предоставляет интерфейс для создание плагинов для Observer.
+ * 
+ * Пример кастомного плагина:
+ * @example
+ * class MousePlugin extends ObserverPlugin {
+  constructor(observer) {
+    super({
+      name: 'mouse',                  // Имя плагина. Запоминается в памяти Observer как имя устройства.
+      observer,                       // Необходимо ОБЯЗАТЕЛЬНО передать экземпляр класса Observer.
+      eventTypes: {                   // Строковые названия всех отслеживаемых событий
+        onButtonPress: 'mousedown',   // |= Название события, которое происходит при нажатии клавиши (у клавиатуры - keydown, у мыши - mousedown)
+        onButtonUp: 'mouseup',        // |= Название события, которое происходит при отжатии клавиши (у клавиатуры - keyup, у мыши - mouseup)
+        keyCodeName: 'button',        // |= Плагин генерит слушатель событий (addEventListener), в который передается callback с event. Нужно
+                                      // |  указать, какой ключ из объекта event нужно взять для того, чтобы получить keyCode в формате int.
+      },
+    });
+  }
+}
+ */
 class ObserverPlugin {
   /** @type {{ onButtonPress: string, onButtonUp: string, keyCodeName: string }} */
   eventTypes = {
