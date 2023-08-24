@@ -329,19 +329,19 @@ class ObserverPlugin {
     console.log(actions);
 
     addEventListener(this.eventTypes?.onButtonPress ?? '', event => {
-      actions?.activation();
-
       this.observer[this.name]._buttonsToAdd.push(
         event[this.eventTypes.keyCodeName],
       );
       this.observer.updateObserver();
+
+      actions?.activation();
     });
 
     addEventListener(this.eventTypes?.onButtonUp ?? '', event => {
-      actions?.deactivation();
-
       this.observer[this.name]._buttonsToRemove.push(event.keyCode);
       this.observer.updateObserver();
+
+      actions?.deactivation();
     });
   }
 }
@@ -420,7 +420,7 @@ class InputController {
       if (
         this.target !== null &&
         this.target !== undefined &&
-        !this.isAnyActionActive()
+        this.isAnyActionActive()
       ) {
         this.target.dispatchEvent(new Event(this.ACTION_ACTIVATED));
       }
@@ -429,7 +429,11 @@ class InputController {
     const deactivateAction = () => {
       this.observer.update();
 
-      if (this.target !== null && this.target !== undefined) {
+      if (
+        this.target !== null &&
+        this.target !== undefined &&
+        !this.isAnyActionActive()
+      ) {
         this.target.dispatchEvent(new Event(this.ACTION_DEACTIVATED));
       }
     };
