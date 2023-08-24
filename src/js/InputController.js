@@ -417,6 +417,7 @@ class InputController {
   actions = {};
   /** @type {HTMLElement|Document|Window|null} */
   target = null;
+  _lastActivatedAction = undefined;
 
   // КОНСТАНТЫ
   ACTION_ACTIVATED = 'input-controller:action-activated';
@@ -441,7 +442,18 @@ class InputController {
     }
 
     const activateAction = () => {
-      if (this.target !== null && this.target !== undefined) {
+      // Вызываем метод для того, чтобы обновить поле _lastActivatedAction
+      this.isAnyActionActive();
+
+      const rejectDispatch = this._lastActivatedAction
+        ? this.isActionActive(this._lastActivatedAction)
+        : false;
+
+      if (
+        this.target !== null &&
+        this.target !== undefined &&
+        !rejectDispatch
+      ) {
         this.target.dispatchEvent(new Event(this.ACTION_ACTIVATED));
       }
 
@@ -563,7 +575,14 @@ class InputController {
       return keys.find(key => this.isKeyPressed(key)) !== undefined;
     };
 
-    return actionExists && actionEnabled && hasActiveKey(targetAction);
+    const isActive =
+      actionExists && actionEnabled && hasActiveKey(targetAction);
+
+    if (isActive) {
+      this._lastActivatedAction = action;
+    }
+
+    return isActive;
   }
 
   isAnyActionActive() {
