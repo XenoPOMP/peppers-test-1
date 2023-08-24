@@ -45,7 +45,13 @@ controller.bindActions({
   left: {
     keys: [65, 1092],
     enabled: true,
-    onEvent: () => moveSquare(-1, 0),
+    onEvent: () => {
+      controller.disableAction('right');
+      moveSquare(-1, 0);
+    },
+    afterEvent: () => {
+      controller.enableAction('right');
+    },
   },
   bottom: {
     keys: [83, 1099],

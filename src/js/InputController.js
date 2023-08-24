@@ -554,6 +554,7 @@ class InputController {
   isActionActive(action) {
     const targetAction = this.actions[action];
     const actionExists = action in this.actions;
+    const actionEnabled = targetAction.enabled ?? false;
 
     if (!actionExists) {
       throw new Error(
@@ -570,7 +571,7 @@ class InputController {
       return keys.find(key => this.isKeyPressed(key)) !== undefined;
     };
 
-    return actionExists && hasActiveKey(targetAction);
+    return actionExists && actionEnabled && hasActiveKey(targetAction);
   }
 
   isAnyActionActive() {
