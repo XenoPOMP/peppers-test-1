@@ -441,14 +441,6 @@ class InputController {
     }
 
     const activateAction = () => {
-      // console.log({
-      //   anyAction: this.isAnyActionActive(),
-      // });
-
-      if (this.isAnyActionActive()) {
-        return;
-      }
-
       if (this.target !== null && this.target !== undefined) {
         this.target.dispatchEvent(new Event(this.ACTION_ACTIVATED));
       }
