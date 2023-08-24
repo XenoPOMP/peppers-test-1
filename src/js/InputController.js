@@ -329,12 +329,12 @@ class ObserverPlugin {
     console.log(actions);
 
     addEventListener(this.eventTypes?.onButtonPress ?? '', event => {
+      actions?.activation();
+
       this.observer[this.name]._buttonsToAdd.push(
         event[this.eventTypes.keyCodeName],
       );
       this.observer.updateObserver();
-
-      actions?.activation();
     });
 
     addEventListener(this.eventTypes?.onButtonUp ?? '', event => {
@@ -420,7 +420,7 @@ class InputController {
       if (
         this.target !== null &&
         this.target !== undefined &&
-        this.isAnyActionActive()
+        !this.isAnyActionActive()
       ) {
         this.target.dispatchEvent(new Event(this.ACTION_ACTIVATED));
       }
@@ -467,10 +467,14 @@ class InputController {
     this.abortController = new AbortController();
 
     this.target.addEventListener(this.ACTION_ACTIVATED, () => {
+      console.log('Event activated.');
+
       this.onEvent('keypress');
     });
 
     this.target.addEventListener(this.ACTION_DEACTIVATED, () => {
+      console.log('Event deactivated.');
+
       this.onEvent('keyup');
     });
   }
