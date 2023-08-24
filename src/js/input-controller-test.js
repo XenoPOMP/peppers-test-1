@@ -72,6 +72,9 @@ controller.bindActions({
     onEvent: () => {
       console.log('Вы нажали левую кнопку мыши.');
     },
+    afterEvent: () => {
+      console.log('Вы отжали левую кнопку мыши');
+    },
   },
   rmb: {
     keys: [2],

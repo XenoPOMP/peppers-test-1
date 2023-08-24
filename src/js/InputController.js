@@ -338,10 +338,10 @@ class ObserverPlugin {
     });
 
     addEventListener(this.eventTypes?.onButtonUp ?? '', event => {
+      actions?.deactivation();
+
       this.observer[this.name]._buttonsToRemove.push(event.keyCode);
       this.observer.updateObserver();
-
-      actions?.deactivation();
     });
   }
 }
@@ -429,11 +429,7 @@ class InputController {
     const deactivateAction = () => {
       this.observer.update();
 
-      if (
-        this.target !== null &&
-        this.target !== undefined &&
-        !this.isAnyActionActive()
-      ) {
+      if (this.target !== null && this.target !== undefined) {
         this.target.dispatchEvent(new Event(this.ACTION_DEACTIVATED));
       }
     };
