@@ -34,22 +34,6 @@ const remove = (array, predicate) => {
   return result;
 };
 
-/**
- * @param {any[]} arrayOne
- * @param {any[]} arrayTwo
- *
- * @returns {boolean}
- */
-const arraysEqual = (arrayOne, arrayTwo) => {
-  const bothAreArrays = Array.isArray(arrayOne) && Array.isArray(arrayTwo);
-  const lengthsAreEqual = arrayOne.length === arrayTwo.length;
-  const itemsAreTheSame = arrayOne.every(
-    (val, index) => val === arrayTwo[index],
-  );
-
-  return bothAreArrays && lengthsAreEqual && itemsAreTheSame;
-};
-
 class InputObserver {
   /** @param {{manualInit?: boolean, updateType?: 'onTick' | 'always', autodetectDevice?: boolean, initialDevice?: string}} props */
   constructor({
@@ -343,20 +327,15 @@ class ObserverPlugin {
    */
   init(actions) {
     addEventListener(this.eventTypes?.onButtonPress ?? '', event => {
-      const { _previouslyPressed, pressed } = this.observer[this.name];
-
-      actions?.activation();
-
       this.observer[this.name]._buttonsToAdd.push(
         event[this.eventTypes.keyCodeName],
       );
-
       this.observer.updateObserver();
+
+      actions?.activation();
     });
 
     addEventListener(this.eventTypes?.onButtonUp ?? '', event => {
-      // actions?.deactivation();
-
       this.observer[this.name]._buttonsToRemove.push(event.keyCode);
       this.observer.updateObserver();
 
@@ -439,7 +418,7 @@ class InputController {
       if (
         this.target !== null &&
         this.target !== undefined &&
-        !this.isAnyActionActive()
+        this.isAnyActionActive()
       ) {
         this.target.dispatchEvent(new Event(this.ACTION_ACTIVATED));
       }
@@ -451,7 +430,7 @@ class InputController {
       if (
         this.target !== null &&
         this.target !== undefined &&
-        this.isAnyActionActive()
+        !this.isAnyActionActive()
       ) {
         this.target.dispatchEvent(new Event(this.ACTION_DEACTIVATED));
       }
