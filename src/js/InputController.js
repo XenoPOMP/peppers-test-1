@@ -336,10 +336,10 @@ class ObserverPlugin {
     });
 
     addEventListener(this.eventTypes?.onButtonUp ?? '', event => {
+      actions?.deactivation();
+
       this.observer[this.name]._buttonsToRemove.push(event.keyCode);
       this.observer.updateObserver();
-
-      actions?.deactivation();
     });
   }
 }
