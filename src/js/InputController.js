@@ -326,8 +326,6 @@ class ObserverPlugin {
    * @param {{activation: () => any, deactivation: () => any}} [actions]
    */
   init(actions) {
-    console.log(actions);
-
     addEventListener(this.eventTypes?.onButtonPress ?? '', event => {
       this.observer[this.name]._buttonsToAdd.push(
         event[this.eventTypes.keyCodeName],
