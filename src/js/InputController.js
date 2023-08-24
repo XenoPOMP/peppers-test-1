@@ -34,6 +34,22 @@ const remove = (array, predicate) => {
   return result;
 };
 
+/**
+ * @param {any[]} arrayOne
+ * @param {any[]} arrayTwo
+ *
+ * @returns {boolean}
+ */
+const arraysEqual = (arrayOne, arrayTwo) => {
+  const bothAreArrays = Array.isArray(arrayOne) && Array.isArray(arrayTwo);
+  const lengthsAreEqual = arrayOne.length === arrayTwo.length;
+  const itemsAreTheSame = arrayOne.every(
+    (val, index) => val === arrayTwo[index],
+  );
+
+  return bothAreArrays && lengthsAreEqual && itemsAreTheSame;
+};
+
 class InputObserver {
   /** @param {{manualInit?: boolean, updateType?: 'onTick' | 'always', autodetectDevice?: boolean, initialDevice?: string}} props */
   constructor({
