@@ -531,9 +531,15 @@ class InputController {
     // Так как onEvent запускается только при необходимости,
     // мы можем добавить в условие сравнение с последним активным
     // ивентом.
-    const activeActionsNames = actionNames.filter(
-      name => this.isActionActive(name) || name === this._lastActivatedAction,
-    );
+    const activeActionsNames = actionNames.filter(name => {
+      console.log({
+        lastActive: this._lastActivatedAction,
+        name: name,
+        equals: this.isActionActive(name) || name === this._lastActivatedAction,
+      });
+
+      return this.isActionActive(name) || name === this._lastActivatedAction;
+    });
 
     activeActionsNames.map(activeActionName => {
       const { onEvent, afterEvent } = this.actions[activeActionName];
