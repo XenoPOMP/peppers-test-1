@@ -415,7 +415,7 @@ class InputController {
     }
 
     const activateAction = () => {
-      this.observer.update();
+      // this.observer.update();
 
       if (
         this.target !== null &&
@@ -427,7 +427,7 @@ class InputController {
     };
 
     const deactivateAction = () => {
-      this.observer.update();
+      // this.observer.update();
 
       if (
         this.target !== null &&
