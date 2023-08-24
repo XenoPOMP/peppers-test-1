@@ -445,11 +445,11 @@ class InputController {
       //   anyAction: this.isAnyActionActive(),
       // });
 
-      if (
-        this.target !== null &&
-        this.target !== undefined &&
-        this.isAnyActionActive()
-      ) {
+      if (!this.isAnyActionActive()) {
+        return;
+      }
+
+      if (this.target !== null && this.target !== undefined) {
         this.target.dispatchEvent(new Event(this.ACTION_ACTIVATED));
       }
 

@@ -56,17 +56,35 @@ controller.bindActions({
   bottom: {
     keys: [83, 1099],
     enabled: true,
-    onEvent: () => moveSquare(0, 1),
+    onEvent: () => {
+      controller.disableAction('top');
+      moveSquare(0, 1);
+    },
+    afterEvent: () => {
+      controller.enableAction('top');
+    },
   },
   right: {
     keys: [68, 1074],
     enabled: true,
-    onEvent: () => moveSquare(1, 0),
+    onEvent: () => {
+      controller.disableAction('left');
+      moveSquare(1, 0);
+    },
+    afterEvent: () => {
+      controller.enableAction('left');
+    },
   },
   top: {
     keys: [87, 1094],
     enabled: true,
-    onEvent: () => moveSquare(0, -1),
+    onEvent: () => {
+      controller.disableAction('bottom');
+      moveSquare(0, -1);
+    },
+    afterEvent: () => {
+      controller.enableAction('bottom');
+    },
   },
   lmb: {
     keys: [0],
