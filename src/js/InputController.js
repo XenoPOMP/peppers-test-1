@@ -360,14 +360,14 @@ class ObserverPlugin {
     });
 
     addEventListener(this.eventTypes?.onButtonUp ?? '', event => {
+      actions?.deactivation();
+
       this.observer[this.name].pressed = [];
 
       this.observer[this.name]._buttonsToRemove.push(
         event[this.eventTypes.keyCodeName],
       );
       this.observer.updateObserver();
-
-      actions?.deactivation();
     });
   }
 }
