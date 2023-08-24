@@ -301,7 +301,7 @@ class InputObserver {
 
 /**
  * Этот класс предоставляет интерфейс для создание плагинов для Observer.
- * 
+ *
  * Пример кастомного плагина:
  * @example
  * class MousePlugin extends ObserverPlugin {
@@ -532,11 +532,11 @@ class InputController {
     // мы можем добавить в условие сравнение с последним активным
     // ивентом.
     const activeActionsNames = actionNames.filter(name => {
-      console.log({
-        lastActive: this._lastActivatedAction,
-        name: name,
-        equals: this.isActionActive(name) || name === this._lastActivatedAction,
-      });
+      // console.log({
+      //   lastActive: this._lastActivatedAction,
+      //   name: name,
+      //   equals: this.isActionActive(name) || name === this._lastActivatedAction,
+      // });
 
       return this.isActionActive(name) || name === this._lastActivatedAction;
     });
