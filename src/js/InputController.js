@@ -152,8 +152,6 @@ class InputObserver {
     });
 
     this.plugins = plugins;
-
-    console.log(this);
   }
 
   _processInputDevice(inputDevice) {
@@ -353,15 +351,17 @@ class ObserverPlugin {
     addEventListener(this.eventTypes?.onButtonPress ?? '', event => {
       const { _previouslyPressed, pressed } = this.observer[this.name];
 
-      actions?.activation();
-
       this.observer[this.name]._buttonsToAdd.push(
         event[this.eventTypes.keyCodeName],
       );
       this.observer.updateObserver();
+
+      actions?.activation();
     });
 
     addEventListener(this.eventTypes?.onButtonUp ?? '', event => {
+      this.observer[this.name].pressed = [];
+
       this.observer[this.name]._buttonsToRemove.push(
         event[this.eventTypes.keyCodeName],
       );
@@ -448,7 +448,7 @@ class InputController {
       if (
         this.target !== null &&
         this.target !== undefined &&
-        !this.isAnyActionActive()
+        this.isAnyActionActive()
       ) {
         this.target.dispatchEvent(new Event(this.ACTION_ACTIVATED));
       }
@@ -457,11 +457,7 @@ class InputController {
     };
 
     const deactivateAction = () => {
-      if (
-        this.target !== null &&
-        this.target !== undefined &&
-        this.isAnyActionActive()
-      ) {
+      if (this.target !== null && this.target !== undefined) {
         this.target.dispatchEvent(new Event(this.ACTION_DEACTIVATED));
       }
     };
