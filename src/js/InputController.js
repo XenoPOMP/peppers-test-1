@@ -173,6 +173,10 @@ class InputObserver {
           inputDevice.pressed,
           button => button === buttonToRemove,
         );
+
+        if (arraysEqual(inputDevice.pressed, inputDevice._previouslyPressed)) {
+          inputDevice.pressed = [inputDevice.pressed.at(-1)];
+        }
       } else {
         removalDelay.push(buttonToRemove);
       }
@@ -433,9 +437,9 @@ class InputController {
     }
 
     const activateAction = () => {
-      console.log({
-        anyAction: this.isAnyActionActive(),
-      });
+      // console.log({
+      //   anyAction: this.isAnyActionActive(),
+      // });
 
       if (
         this.target !== null &&
