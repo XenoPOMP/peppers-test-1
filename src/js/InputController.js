@@ -152,8 +152,6 @@ class InputObserver {
     });
 
     this.plugins = plugins;
-
-    console.log(this);
   }
 
   _processInputDevice(inputDevice) {
@@ -303,7 +301,7 @@ class InputObserver {
 
 /**
  * Этот класс предоставляет интерфейс для создание плагинов для Observer.
- * 
+ *
  * Пример кастомного плагина:
  * @example
  * class MousePlugin extends ObserverPlugin {
@@ -362,12 +360,14 @@ class ObserverPlugin {
     });
 
     addEventListener(this.eventTypes?.onButtonUp ?? '', event => {
+      actions?.deactivation();
+
+      this.observer[this.name].pressed = [];
+
       this.observer[this.name]._buttonsToRemove.push(
         event[this.eventTypes.keyCodeName],
       );
       this.observer.updateObserver();
-
-      actions?.deactivation();
     });
   }
 }
@@ -417,6 +417,7 @@ class InputController {
   actions = {};
   /** @type {HTMLElement|Document|Window|null} */
   target = null;
+  _lastActivatedAction = undefined;
 
   // КОНСТАНТЫ
   ACTION_ACTIVATED = 'input-controller:action-activated';
@@ -441,14 +442,17 @@ class InputController {
     }
 
     const activateAction = () => {
-      // console.log({
-      //   anyAction: this.isAnyActionActive(),
-      // });
+      // Вызываем метод для того, чтобы обновить поле _lastActivatedAction
+      this.isAnyActionActive();
+
+      const rejectDispatch = this._lastActivatedAction
+        ? this.isActionActive(this._lastActivatedAction)
+        : false;
 
       if (
         this.target !== null &&
         this.target !== undefined &&
-        !this.isAnyActionActive()
+        !rejectDispatch
       ) {
         this.target.dispatchEvent(new Event(this.ACTION_ACTIVATED));
       }
@@ -524,9 +528,18 @@ class InputController {
 
     const actionNames = Object.keys(this.actions);
 
-    const activeActionsNames = actionNames.filter(name =>
-      this.isActionActive(name),
-    );
+    // Так как onEvent запускается только при необходимости,
+    // мы можем добавить в условие сравнение с последним активным
+    // ивентом.
+    const activeActionsNames = actionNames.filter(name => {
+      // console.log({
+      //   lastActive: this._lastActivatedAction,
+      //   name: name,
+      //   equals: this.isActionActive(name) || name === this._lastActivatedAction,
+      // });
+
+      return this.isActionActive(name) || name === this._lastActivatedAction;
+    });
 
     activeActionsNames.map(activeActionName => {
       const { onEvent, afterEvent } = this.actions[activeActionName];
@@ -554,6 +567,7 @@ class InputController {
   isActionActive(action) {
     const targetAction = this.actions[action];
     const actionExists = action in this.actions;
+    const actionEnabled = targetAction.enabled ?? false;
 
     if (!actionExists) {
       throw new Error(
@@ -570,7 +584,14 @@ class InputController {
       return keys.find(key => this.isKeyPressed(key)) !== undefined;
     };
 
-    return actionExists && hasActiveKey(targetAction);
+    const isActive =
+      actionExists && actionEnabled && hasActiveKey(targetAction);
+
+    if (isActive) {
+      this._lastActivatedAction = action;
+    }
+
+    return isActive;
   }
 
   isAnyActionActive() {
