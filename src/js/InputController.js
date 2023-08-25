@@ -34,8 +34,24 @@ const remove = (array, predicate) => {
   return result;
 };
 
+/**
+ * @param {any[]} arrayOne
+ * @param {any[]} arrayTwo
+ *
+ * @returns {boolean}
+ */
+const arraysEqual = (arrayOne, arrayTwo) => {
+  const bothAreArrays = Array.isArray(arrayOne) && Array.isArray(arrayTwo);
+  const lengthsAreEqual = arrayOne.length === arrayTwo.length;
+  const itemsAreTheSame = arrayOne.every(
+    (val, index) => val === arrayTwo[index],
+  );
+
+  return bothAreArrays && lengthsAreEqual && itemsAreTheSame;
+};
+
 class InputObserver {
-  /** @param {{manualInit?: boolean, updateType?: 'onTick' | 'always', autodetectDevice?: boolean, initialDevice?: 'keyboard'}} props */
+  /** @param {{manualInit?: boolean, updateType?: 'onTick' | 'always', autodetectDevice?: boolean, initialDevice?: string}} props */
   constructor({
     manualInit,
     updateType = 'always',
@@ -44,12 +60,35 @@ class InputObserver {
   }) {
     this.lastActiveDevice = undefined;
 
-    this.keyboard = {
-      _buttonsToAdd: [],
-      _buttonsToRemove: [],
+    this.gamepad = {
+      buttonMap: [
+        'A',
+        'B',
+        'X',
+        'Y',
+        'LB',
+        'RB',
+        'LT',
+        'RT',
+        'Start',
+        'Menu',
+        'LS',
+        'RS',
+        'Up',
+        'Down',
+        'Left',
+        'Right',
+      ],
       _previouslyPressed: [],
       pressed: [],
       justPressed: [],
+
+      _previouslyConnected: false,
+      connected: false,
+      justConnected: false,
+      justDisconnected: false,
+
+      axes: [0, 0, 0, 0],
     };
 
     if (manualInit === true && manualInit !== undefined) {
@@ -69,27 +108,54 @@ class InputObserver {
     this.init('default');
   }
 
-  init() {
-    addEventListener('keydown', event => {
-      this.keyboard._buttonsToAdd.push(event.keyCode);
-
+  updateObserver() {
+    {
       if (this.updateType === 'always') {
         this.update();
       }
+    }
+  }
+
+  init() {
+    // Отслеживание подключения и отключения геймпада
+    addEventListener('gamepadconnected', () => {
+      this.gamepad.connected = true;
+      this.updateObserver();
     });
 
-    addEventListener('keyup', event => {
-      this.keyboard._buttonsToRemove.push(event.keyCode);
-
-      if (this.updateType === 'always') {
-        this.update();
-      }
+    addEventListener('gamepaddisconnected', () => {
+      this.gamepad.connected = false;
+      this.updateObserver();
     });
   }
 
+  /**
+   * @param {ObserverPlugin[]} [plugins]
+   * @param {{activation: () => any, deactivation: () => any}} [actions]
+   */
+  initPlugins(plugins, actions) {
+    if (plugins?.length === 0 || plugins === undefined) {
+      console.log('Didn`t found any plugin.');
+      return;
+    }
+
+    plugins.forEach(plugin => {
+      plugin.init(actions);
+
+      this[plugin.name] = {
+        _buttonsToAdd: [],
+        _buttonsToRemove: [],
+        _previouslyPressed: [],
+        pressed: [],
+        justPressed: [],
+      };
+    });
+
+    this.plugins = plugins;
+  }
+
   _processInputDevice(inputDevice) {
-    // FIX (потенциально): заменить функцию cloneDeep
-    inputDevice._previouslyPressed = cloneDeep(inputDevice.pressed);
+    inputDevice._previouslyPressed = [...(inputDevice.pressed ?? [])];
 
     inputDevice._buttonsToAdd.forEach(buttonToAdd => {
       if (!inputDevice.pressed.includes(buttonToAdd)) {
@@ -105,6 +171,14 @@ class InputObserver {
           inputDevice.pressed,
           button => button === buttonToRemove,
         );
+
+        if (
+          arraysEqual(inputDevice.pressed, inputDevice._previouslyPressed) &&
+          inputDevice._previouslyPressed.length > 0 &&
+          inputDevice.pressed.length > 0
+        ) {
+          inputDevice.pressed = [inputDevice.pressed.at(-1)];
+        }
       } else {
         removalDelay.push(buttonToRemove);
       }
@@ -120,14 +194,104 @@ class InputObserver {
     removalDelay.forEach(button => inputDevice._buttonsToRemove.push(button));
   }
 
+  _processGamepad() {
+    const gamepads = navigator.getGamepads();
+
+    const firstGamepad = gamepads[0];
+
+    if (firstGamepad !== null) {
+      /** @returns {{declaration: GamepadButton, index: number}[]} */
+      const buttons = firstGamepad.buttons.map((button, i) => {
+        return {
+          declaration: button,
+          index: i,
+        };
+      });
+
+      const pressedButtons = buttons.filter(
+        button => button.declaration.pressed,
+      );
+
+      this.gamepad._previouslyPressed = cloneDeep(this.gamepad.pressed);
+      this.gamepad.pressed = [];
+
+      pressedButtons.forEach(pressedButton => {
+        const { declaration, index } = pressedButton;
+
+        const buttonName = this.gamepad.buttonMap[index];
+        this.gamepad.pressed.push(buttonName);
+      });
+
+      this.gamepad.justPressed = this.gamepad.pressed.filter(
+        button => !this.gamepad._previouslyPressed.includes(button),
+      );
+      this.gamepad.axes = firstGamepad.axes;
+    }
+  }
+
+  _processGamepadConnection() {
+    // Определяем, был ли геймпад подключен только что
+    if (this.gamepad.connected && !this.gamepad._previouslyConnected) {
+      this.gamepad.justConnected = true;
+    } else {
+      this.gamepad.justConnected = false;
+    }
+
+    // Определяем, был ли геймпад отключен только что
+    if (!this.gamepad.connected && this.gamepad._previouslyConnected) {
+      this.gamepad.justDisconnected = true;
+    } else {
+      this.gamepad.justDisconnected = false;
+    }
+
+    // Запоминаем статус подключения в переменной _previouslyConnected
+    this.gamepad._previouslyConnected = this.gamepad.connected;
+  }
+
   _setLastActiveDevice() {
     if (this.keyboard.justPressed.length > 0) {
       this.lastActiveDevice = 'keyboard';
     }
+
+    if (this.mouse.justPressed.length > 0) {
+      this.lastActiveDevice = 'mouse';
+    }
+
+    if (this.plugins !== undefined) {
+      const deviceNames = this.plugins.map(plugin => plugin.name);
+
+      deviceNames.forEach(name => {
+        const isJustPressed = this[name].justPressed.length > 0;
+
+        if (isJustPressed) {
+          this.lastActiveDevice = name;
+        }
+      });
+    }
+
+    if (!this.gamepad.connected) return;
+
+    let axesActive = false;
+
+    this.gamepad.axes.forEach(axis => {
+      if (Math.abs(axis) > 0.15) axesActive = true;
+    });
+
+    if (this.gamepad.justPressed.length > 0 || axesActive) {
+      this.lastActiveDevice = 'gamepad';
+    }
   }
 
   update() {
-    this._processInputDevice(this.keyboard);
+    this.plugins?.map(plugin => {
+      this._processInputDevice(this[plugin.name]);
+    });
+
+    this._processGamepadConnection();
+
+    if (this.gamepad.connected) {
+      this._processGamepad();
+    }
 
     if (this.autodetectDevice) {
       this._setLastActiveDevice();
@@ -135,11 +299,114 @@ class InputObserver {
   }
 }
 
+/**
+ * Этот класс предоставляет интерфейс для создание плагинов для Observer.
+ *
+ * Пример кастомного плагина:
+ * @example
+ * class MousePlugin extends ObserverPlugin {
+  constructor(observer) {
+    super({
+      name: 'mouse',                  // Имя плагина. Запоминается в памяти Observer как имя устройства.
+      observer,                       // Необходимо ОБЯЗАТЕЛЬНО передать экземпляр класса Observer.
+      eventTypes: {                   // Строковые названия всех отслеживаемых событий
+        onButtonPress: 'mousedown',   // |= Название события, которое происходит при нажатии клавиши (у клавиатуры - keydown, у мыши - mousedown)
+        onButtonUp: 'mouseup',        // |= Название события, которое происходит при отжатии клавиши (у клавиатуры - keyup, у мыши - mouseup)
+        keyCodeName: 'button',        // |= Плагин генерит слушатель событий (addEventListener), в который передается callback с event. Нужно
+                                      // |  указать, какой ключ из объекта event нужно взять для того, чтобы получить keyCode в формате int.
+      },
+    });
+  }
+}
+ */
+class ObserverPlugin {
+  /** @type {{ onButtonPress: string, onButtonUp: string, keyCodeName: string }} */
+  eventTypes = {
+    onButtonPress: 'keydown',
+    onButtonUp: 'keyup',
+    keyCodeName: 'keyCode',
+  };
+
+  /**
+   * @param {{name: PropertyKey, observer: InputObserver, eventTypes: { onButtonPress: string, onButtonUp: string, keyCodeName: string }}} props
+   */
+  constructor(props) {
+    const { name, observer, eventTypes } = props;
+
+    /** @type {string} */
+    this.name = name;
+    /** @type {InputObserver} */
+    this.observer = observer;
+    /** @type {typeof eventTypes} */
+    this.eventTypes = eventTypes;
+  }
+
+  /**
+   * Этот метод будет вызываться при нажатии на кнопку.
+   *
+   * Сюда нужно поместить логику нажатия.
+   * @param {{activation: () => any, deactivation: () => any}} [actions]
+   */
+  init(actions) {
+    addEventListener(this.eventTypes?.onButtonPress ?? '', event => {
+      const { _previouslyPressed, pressed } = this.observer[this.name];
+
+      actions?.activation();
+
+      this.observer[this.name]._buttonsToAdd.push(
+        event[this.eventTypes.keyCodeName],
+      );
+      this.observer.updateObserver();
+    });
+
+    addEventListener(this.eventTypes?.onButtonUp ?? '', event => {
+      actions?.deactivation();
+
+      this.observer[this.name].pressed = [];
+
+      this.observer[this.name]._buttonsToRemove.push(
+        event[this.eventTypes.keyCodeName],
+      );
+      this.observer.updateObserver();
+    });
+  }
+}
+
+class KeyboardPlugin extends ObserverPlugin {
+  /** @param {InputObserver} observer */
+  constructor(observer) {
+    super({
+      name: 'keyboard',
+      observer,
+      eventTypes: {
+        onButtonPress: 'keydown',
+        onButtonUp: 'keyup',
+        keyCodeName: 'keyCode',
+      },
+    });
+  }
+}
+
+class MousePlugin extends ObserverPlugin {
+  /** @param {InputObserver} observer */
+  constructor(observer) {
+    super({
+      name: 'mouse',
+      observer,
+      eventTypes: {
+        onButtonPress: 'mousedown',
+        onButtonUp: 'mouseup',
+        keyCodeName: 'button',
+      },
+    });
+  }
+}
+
 class InputController {
   observer = new InputObserver({
     manualInit: false,
     updateType: 'always',
-    autodetectDevice: false,
+    autodetectDevice: true,
   });
 
   abortController = new AbortController();
@@ -150,10 +417,16 @@ class InputController {
   actions = {};
   /** @type {HTMLElement|Document|Window|null} */
   target = null;
+  _lastActivatedAction = undefined;
 
   // КОНСТАНТЫ
   ACTION_ACTIVATED = 'input-controller:action-activated';
   ACTION_DEACTIVATED = 'input-controller:action-deactivated';
+  /** @type {ObserverPlugin[]} */
+  PLUGIN_LIST = [
+    new KeyboardPlugin(this.observer),
+    new MousePlugin(this.observer),
+  ];
 
   /**
    * @param {typeof InputController.prototype.actions} [actionsToBind]
@@ -168,28 +441,39 @@ class InputController {
       this.target = target;
     }
 
-    addEventListener('keydown', () => {
-      this.observer.update();
+    const activateAction = () => {
+      // Вызываем метод для того, чтобы обновить поле _lastActivatedAction
+      this.isAnyActionActive();
 
+      const rejectDispatch = this._lastActivatedAction
+        ? this.isActionActive(this._lastActivatedAction)
+        : false;
+
+      if (
+        this.target !== null &&
+        this.target !== undefined &&
+        !rejectDispatch
+      ) {
+        this.target.dispatchEvent(new Event(this.ACTION_ACTIVATED));
+      }
+
+      // this.observer.update();
+    };
+
+    const deactivateAction = () => {
       if (
         this.target !== null &&
         this.target !== undefined &&
         this.isAnyActionActive()
       ) {
-        this.target.dispatchEvent(new Event(this.ACTION_ACTIVATED));
-      }
-    });
-
-    addEventListener('keyup', () => {
-      this.observer.update();
-
-      if (
-        this.target !== null &&
-        this.target !== undefined &&
-        !this.isAnyActionActive()
-      ) {
         this.target.dispatchEvent(new Event(this.ACTION_DEACTIVATED));
       }
+    };
+
+    // ИНИЦИАЛИЗАЦИЯ ПЛАГИНОВ
+    this.observer.initPlugins(this.PLUGIN_LIST, {
+      activation: activateAction,
+      deactivation: deactivateAction,
     });
   }
 
@@ -219,10 +503,14 @@ class InputController {
     this.abortController = new AbortController();
 
     this.target.addEventListener(this.ACTION_ACTIVATED, () => {
+      console.log('Event activated.');
+
       this.onEvent('keypress');
     });
 
     this.target.addEventListener(this.ACTION_DEACTIVATED, () => {
+      console.log('Event deactivated.');
+
       this.onEvent('keyup');
     });
   }
@@ -240,9 +528,18 @@ class InputController {
 
     const actionNames = Object.keys(this.actions);
 
-    const activeActionsNames = actionNames.filter(name =>
-      this.isActionActive(name),
-    );
+    // Так как onEvent запускается только при необходимости,
+    // мы можем добавить в условие сравнение с последним активным
+    // ивентом.
+    const activeActionsNames = actionNames.filter(name => {
+      // console.log({
+      //   lastActive: this._lastActivatedAction,
+      //   name: name,
+      //   equals: this.isActionActive(name) || name === this._lastActivatedAction,
+      // });
+
+      return this.isActionActive(name) || name === this._lastActivatedAction;
+    });
 
     activeActionsNames.map(activeActionName => {
       const { onEvent, afterEvent } = this.actions[activeActionName];
@@ -252,11 +549,15 @@ class InputController {
           if (onEvent !== undefined) {
             onEvent();
           }
+
+          break;
         }
         case 'keyup': {
           if (afterEvent !== undefined) {
             afterEvent();
           }
+
+          break;
         }
       }
     });
@@ -266,6 +567,7 @@ class InputController {
   isActionActive(action) {
     const targetAction = this.actions[action];
     const actionExists = action in this.actions;
+    const actionEnabled = targetAction.enabled ?? false;
 
     if (!actionExists) {
       throw new Error(
@@ -282,7 +584,14 @@ class InputController {
       return keys.find(key => this.isKeyPressed(key)) !== undefined;
     };
 
-    return actionExists && hasActiveKey(targetAction);
+    const isActive =
+      actionExists && actionEnabled && hasActiveKey(targetAction);
+
+    if (isActive) {
+      this._lastActivatedAction = action;
+    }
+
+    return isActive;
   }
 
   isAnyActionActive() {
